@@ -206,7 +206,7 @@ if sys.argv[1] == "list":
 		print(program)
 		f = open("./programs/"+program+"/domains.txt")
 		for domain in f:
-			print("    "+domain)
+			print("    "+domain.rstrip('\n'))
 	exit()
 
 #if sys.argv[1] == "dns":
