@@ -64,7 +64,7 @@ def subTrack(program):
 	for domain in f:
 		domain = domain.rstrip('\n')
 		path="programs/"+program+"/"+domain
-		print("Comparing new discoveries to existing discoveries")
+		print("\n*** Comparing new discoveries to existing discoveries")
 		if os.path.isfile(path+"_all.txt") == False:
 			print("First enum for this domain, no results to compare")
 			os.system("cp "+path+"_latest.txt "+path+"_all.txt")
