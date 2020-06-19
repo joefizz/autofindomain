@@ -120,9 +120,10 @@ if len(sys.argv) < 2:
 	exit()
 
 if linux == "true":
+	print("*** Downloading latest version of findomain")
 	if os.path.isfile("./findomain-linux"):
 		os.system("rm -f ./findomain-linux")
-	os.system("wget https://github.com/Edu4rdSHL/findomain/releases/latest/download/findomain-linux; chmod +x findomain-linux")
+	os.system("wget https://github.com/Edu4rdSHL/findomain/releases/latest/download/findomain-linux -q --show-progress; chmod +x findomain-linux")
 
 if (sys.argv[1]) == "enum":
 	if os.path.isfile(programs) == False:
