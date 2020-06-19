@@ -8,6 +8,18 @@ from email.mime.base import MIMEBase
 from email import encoders
 from pathlib import Path
 
+banner = """
+              __         _______ ______   
+ .---.-.--.--|  |_.-----|   _   |   _  \  
+ |  _  |  |  |   _|  _  |.  1___|.  |   \ 
+ |___._|_____|____|_____|.  __) |.  |    \ 
+                        |:  |   |:  1    /
+                        |::.|   |::.. . / 
+                        `---'   `------'  
+                                          
+"""
+print(banner)
+
 if os.path.isfile('config.ini') == False:
 	print("config.ini file does not exist. Please copy config.ini.default to config.ini and update settings to suit")
 	exit()
