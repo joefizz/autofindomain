@@ -71,7 +71,8 @@ def subTrack(program):
 			break
 		os.system("comm -23 "+path+"_latest.txt "+path+"_all.txt > "+path+"_new.txt")
 		print("New subdomains for "+domain+" saved to "+path+"_new.txt")
-		os.system("cat "+path+"_new.txt | sort -u >> "+path+"_all.txt")
+		os.system("cat "+path+"_new.txt >> "+path+"_temp.txt")
+		os.system("sort -u "+path+"_temp.txt > "+path+"_all.txt")
 		print("Newly discovered subdomains added to all")
 	os.system("echo 'New subdomains for "+program+":' > programs/"+program+"/report.txt")
 	os.system("cat programs/"+program+"/*_new.txt >> programs/"+program+"/report.txt")
