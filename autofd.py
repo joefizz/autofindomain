@@ -50,6 +50,7 @@ def subEnumerate(program):
 	for domain in f:
 		domain = domain.rstrip('\n')
 		path="programs/"+program+"/"+domain
+		print("\n*** enumerating "+domain)
 		if linux == "true":
 			os.system("./findomain-linux -q -t "+domain+" -u out.txt")
 		if not linux == "true":
