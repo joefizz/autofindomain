@@ -50,7 +50,7 @@ def subEnumerate(program):
 		domain = domain.rstrip('\n')
 		path="programs/"+program+"/"+domain
 		if linux == "true":
-			os.system("./findomain -q -t "+domain+" -u out.txt")
+			os.system("./findomain-linux -q -t "+domain+" -u out.txt")
 		if not linux == "true":
 			os.system("findomain -q -t "+domain+" -u out.txt")
 		os.system("sort -u out.txt > "+path+"_latest.txt")
@@ -119,9 +119,9 @@ if len(sys.argv) < 2:
 	print("autofd usage\n\n./autofd.py <option>\n\nOptions: enum, add, del, list, email, purge\n")
 	exit()
 
-print(type(linux))
-
 if linux == "true":
+	if os.path.isfile("./findomain-linux"):
+		os.system("rm -f ./findomain-linux")
 	os.system("wget https://github.com/Edu4rdSHL/findomain/releases/latest/download/findomain-linux; chmod +x findomain-linux")
 
 if (sys.argv[1]) == "enum":
