@@ -203,7 +203,7 @@ if sys.argv[1] == "list":
 	p = open(programs)
 	for program in p:
 		program = program.rstrip('\n')
-		print(program)
+		print("\n"+program)
 		f = open("./programs/"+program+"/domains.txt")
 		for domain in f:
 			print("    "+domain.rstrip('\n'))
