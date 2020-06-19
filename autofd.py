@@ -119,16 +119,16 @@ if len(sys.argv) < 2:
 	print("autofd usage\n\n./autofd.py <option>\n\nOptions: enum, add, del, list, email, purge\n")
 	exit()
 
-if linux == "true":
-	print("*** Downloading latest version of findomain")
-	if os.path.isfile("./findomain-linux"):
-		os.system("rm -f ./findomain-linux")
-	os.system("wget https://github.com/Edu4rdSHL/findomain/releases/latest/download/findomain-linux -q --show-progress; chmod +x findomain-linux")
-
 if (sys.argv[1]) == "enum":
 	if os.path.isfile(programs) == False:
 		print("No programs to enumerate.  Have you run `./autofindomain.py add`  ?")
 		exit()
+	if linux == "true":
+		print("*** Downloading latest version of findomain")
+		if os.path.isfile("./findomain-linux"):
+			os.system("rm -f ./findomain-linux")
+		os.system("wget https://github.com/Edu4rdSHL/findomain/releases/latest/download/findomain-linux -q --show-progress; chmod +x findomain-linux")
+
 	p = open(programs)
 	for program in p:
 		program = program.rstrip('\n')
