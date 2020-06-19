@@ -68,7 +68,7 @@ def subTrack(program):
 			print("First enum for this domain, no results to compare")
 			os.system("cp "+path+"_latest.txt "+path+"_all.txt")
 			print("Subdomains saved to "+path+"_all.txt")
-			break()
+			break
 		os.system("comm -23 "+path+"_latest.txt "+path+"_all.txt > "+path+"_new.txt")
 		print("New subdomains for "+domain+" saved to "+path+"_new.txt")
 		os.system("cat "+path+"_new.txt | sort -u >> "+path+"_all.txt")
