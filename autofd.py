@@ -61,7 +61,7 @@ def subEnumerate(program):
 def subTrack(program):
 	f = open("programs/" + program + "/domains.txt")
 	for domain in f:
-		domain = domain.rstrip('\new')
+		domain = domain.rstrip('\n')
 		path="programs/"+program+"/"+domain
 		print("Comparing new discoveries to existing discoveries")
 		if os.path.isfile(path+"_all.txt") == False:
@@ -71,6 +71,7 @@ def subTrack(program):
 			break
 		os.system("comm -23 "+path+"_latest.txt "+path+"_all.txt > "+path+"_new.txt")
 		print("New subdomains for "+domain+" saved to "+path+"_new.txt")
+		os.system("cp "+path+"_all.txt "+path+"_temp.txt")
 		os.system("cat "+path+"_new.txt >> "+path+"_temp.txt")
 		os.system("sort -u "+path+"_temp.txt > "+path+"_all.txt")
 		print("Newly discovered subdomains added to all")
