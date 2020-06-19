@@ -4,3 +4,4 @@ programs.txt
 config.ini
 out.old.txt
 out.txt
+programs/*

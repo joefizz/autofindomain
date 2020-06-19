@@ -69,12 +69,13 @@ def subTrack(program):
 			print("First enum for this domain, no results to compare")
 			os.system("cp "+path+"_latest.txt "+path+"_all.txt")
 			print("Subdomains saved to "+path+"_all.txt")
-			break
-		os.system("comm -23 "+path+"_latest.txt "+path+"_all.txt > "+path+"_new.txt")
-		print("New subdomains for "+domain+" saved to "+path+"_new.txt")
-		os.system("cp "+path+"_all.txt "+path+"_temp.txt")
-		os.system("cat "+path+"_new.txt >> "+path+"_temp.txt")
-		os.system("sort -u "+path+"_temp.txt > "+path+"_all.txt")
+			os.system("cp "+path+"_latest.txt "+path+"_new.txt")
+		else:
+			os.system("comm -23 "+path+"_latest.txt "+path+"_all.txt > "+path+"_new.txt")
+			print("New subdomains for "+domain+" saved to "+path+"_new.txt")
+			os.system("cp "+path+"_all.txt "+path+"_temp.txt")
+			os.system("cat "+path+"_new.txt >> "+path+"_temp.txt")
+			os.system("sort -u "+path+"_temp.txt > "+path+"_all.txt")
 		print("Newly discovered subdomains added to all")
 	os.system("echo 'New subdomains for "+program+":' > programs/"+program+"/report.txt")
 	os.system("cat programs/"+program+"/*_new.txt >> programs/"+program+"/report.txt")
@@ -134,7 +135,6 @@ if (sys.argv[1]) == "enum":
 		if os.path.isfile("./findomain-linux"):
 			os.system("rm -f ./findomain-linux")
 		os.system("wget https://github.com/Edu4rdSHL/findomain/releases/latest/download/findomain-linux -q --show-progress; chmod +x findomain-linux")
-
 	p = open(programs)
 	for program in p:
 		program = program.rstrip('\n')
@@ -143,6 +143,22 @@ if (sys.argv[1]) == "enum":
 		subTrack(program)
 		subReport(program)
 	p.close()
+	exit()
+
+if (sys.argv[1]) == "program":
+	if os.path.isfile(programs) == False:
+		print("No programs to enumerate.  Have you run `./autofindomain.py add`  ?")
+		exit()
+	if linux == "true":
+		print("*** Downloading latest version of findomain")
+		if os.path.isfile("./findomain-linux"):
+			os.system("rm -f ./findomain-linux")
+		os.system("wget https://github.com/Edu4rdSHL/findomain/releases/latest/download/findomain-linux -q --show-progress; chmod +x findomain-linux")
+	program = sys.argv[2].rstrip('\n')
+	print("program = " + program)
+	subEnumerate(program)
+	subTrack(program)
+	subReport(program)
 	exit()
 
 if (sys.argv[1]) == "add":
