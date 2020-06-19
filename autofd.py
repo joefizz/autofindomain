@@ -116,7 +116,7 @@ def subReport(program):
 
 
 if len(sys.argv) < 2:
-	print("autofindomain usage\n\n./autofindomain.py <option>\n\nOptions: enum, add, del, purge\n")
+	print("autofd usage\n\n./autofd.py <option>\n\nOptions: enum, add, del, list, email, purge\n")
 	exit()
 
 if linux == True:
