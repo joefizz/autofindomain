@@ -1,0 +1,19 @@
+# OS settings - Set to true if using linux.  leave False if using Mac OS
+[OS]
+linux = False
+
+# Email settings
+[email]
+port = 465
+password = Passowrd1
+sender_email = sender@gmail.com
+receiver_email = receiver@gmail.com
+
+# Local file settings
+[files]
+programs = ./programs.txt
+resolvers = ./resolvers.txt
+
+# DNS updater
+#[DNS]
+#source = https://public-dns.info/nameserver/gb.txt
