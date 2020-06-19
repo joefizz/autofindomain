@@ -15,12 +15,12 @@ For Linux there are no pre-reqs (I think)
 
 For Mac OS you need to have findomain already installed - `brew install findomain` - done
 
-##Setup steps:
+## Setup steps:
 Create Gmail account and enable insecure applications (https://myaccount.google.com/lesssecureapps).
 
 cp config.ini.default config.ini and update required settings.
 
-##Features:
+## Features:
 
 `enum` - downloads latest findomain(linux only) and enumerates all the root domains stored with programs. tracks the changes and sends email alerting to all subdomain changes.
 
