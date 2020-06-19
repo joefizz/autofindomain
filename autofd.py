@@ -158,7 +158,7 @@ if (sys.argv[1]) == "add":
 	p.write("\n"+newProgram)
 	p.close()
 	# Check if program directory already exists and add it if not
-	if os.path.isfile("./programs/"+newProgram) == False:
+	if os.path.isfile("./	programs/"+newProgram) == False:
 		os.makedirs("./programs/" + newProgram)
 	Path("./programs/"+newProgram+"/domains.txt").touch()
 	print(newProgram+" added. Please add root domains to ./programs/"+newProgram+"/domains.txt")
@@ -202,7 +202,11 @@ if sys.argv[1] == "list":
 	print("Current programs that will be enumerated:")
 	p = open(programs)
 	for program in p:
-		print(program.strip('\n'))
+		program = program.rstrip('\n')
+		print(program)
+		f = open("./programs/"+program+"/domains.txt")
+		for domain in f:
+			print("    "+domain)
 	exit()
 
 #if sys.argv[1] == "dns":
