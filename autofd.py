@@ -35,6 +35,7 @@ port = parser['email']['port']
 password = parser['email']['password']
 sender_email = parser['email']['sender_email']
 receiver_email = parser['email']['receiver_email']
+email_server = parser['email']['email_server']
 
 # local file settings
 programs = parser['files']['programs']
