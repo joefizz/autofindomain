@@ -28,7 +28,7 @@ parser = configparser.ConfigParser()
 parser.read('config.ini')
 
 # OS settings
-linux = parser['OS']['linux']
+linux = parser['OS']['linux'].lower()
 
 # email settings
 port = parser['email']['port']
@@ -49,9 +49,9 @@ def subEnumerate(program):
 	for domain in f:
 		domain = domain.rstrip('\n')
 		path="programs/"+program+"/"+domain
-		if linux == True:
+		if linux == "true":
 			os.system("./findomain -q -t "+domain+" -u out.txt")
-		if not linux == True:
+		if not linux == "true":
 			os.system("findomain -q -t "+domain+" -u out.txt")
 		os.system("sort -u out.txt > "+path+"_latest.txt")
 		print("Latest subdomain results available in "+path+"_latest.txt")
@@ -83,7 +83,7 @@ def subReport(program):
 	msg['From'] = sender_email
 	msg['To'] = receiver_email
 	context = ssl.create_default_context()
-	with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
+	with smtplib.SMTP_SSL(email_server, port, context=context) as server:
 			server.login(sender_email, password)
 			server.sendmail(sender_email, receiver_email, msg.as_string())
 """
@@ -109,7 +109,7 @@ def subReport(program):
 		part.add_header('Content-Disposition', 'attachment; filename='+label)
 		msg.attach(part)
 		context = ssl.create_default_context()
-	with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
+	with smtplib.SMTP_SSL(email_server, port, context=context) as server:
 		server.login(sender_email, password)
 		server.sendmail(sender_email, receiver_email, msg.as_string())
 
@@ -119,7 +119,9 @@ if len(sys.argv) < 2:
 	print("autofd usage\n\n./autofd.py <option>\n\nOptions: enum, add, del, list, email, purge\n")
 	exit()
 
-if linux == True:
+print(type(linux))
+
+if linux == "true":
 	os.system("wget https://github.com/Edu4rdSHL/findomain/releases/latest/download/findomain-linux; chmod +x findomain-linux")
 
 if (sys.argv[1]) == "enum":

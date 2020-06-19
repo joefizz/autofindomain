@@ -8,6 +8,7 @@ port = 465
 password = Passowrd1
 sender_email = sender@gmail.com
 receiver_email = receiver@gmail.com
+email_server = smtp.gmail.com
 
 # Local file settings
 [files]
