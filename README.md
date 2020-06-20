@@ -30,13 +30,10 @@ Create Gmail account and enable insecure applications (https://myaccount.google.
 
 `purge` - deletes folders for all programs that are NOT in the programs.txt file.
 
-`dns` - updates the list of DNS resolvers used by amass.
-
 `program <program_name>` - run against just one program from programs.txt rather than all of them.  Will error out if the program doesn't already exist.
 
 Example:
 ```
-./autofd.py dns
 ./autofd.py add verizon
 echo verizon.com > ./programs/verizon/domains.txt
 ./autofd.py enum
