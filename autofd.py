@@ -170,7 +170,7 @@ if (sys.argv[1]) == "add":
 	p = open(programs)
 	for program in p:
 		if program == newProgram:
-			print("Program '" + newProgram +"' already exists")
+			print("Program " + newProgram +" already exists")
 			exit()
 	p.close()
 	p = open(programs, 'a')
