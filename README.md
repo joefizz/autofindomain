@@ -18,7 +18,7 @@ For Mac OS you need to have findomain already installed - `brew install findomai
 ## Setup steps:
 Create Gmail account and enable insecure applications (https://myaccount.google.com/lesssecureapps).
 
-cp config.ini.default config.ini and update required settings.
+`cp config.ini.default config.ini` and update required settings.
 
 ## Features:
 
@@ -31,6 +31,8 @@ cp config.ini.default config.ini and update required settings.
 `purge` - deletes folders for all programs that are NOT in the programs.txt file.
 
 `dns` - updates the list of DNS resolvers used by amass.
+
+`program <program_name>` - run against just one program from programs.txt rather than all of them.  Will error out if the program doesn't already exist.
 
 Example:
 ```
