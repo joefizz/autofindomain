@@ -75,12 +75,6 @@ def subEnumerate(program):
 		done = True
 
 
-
-
-		print("\n*** enumerating "+domain)
-
-
-
 		print("Latest subdomain results available in "+path+"_latest.txt")
 
 
@@ -168,7 +162,7 @@ if (sys.argv[1]) == "enum":
 	p = open(programs)
 	for program in p:
 		program = program.rstrip('\n')
-		print("program = " + program)
+		print("\n\n*** Program = " + program)
 		subEnumerate(program)
 		new_domains = subTrack(program)
 		if send_blank_emails == 'true' and new_domains > 0:
