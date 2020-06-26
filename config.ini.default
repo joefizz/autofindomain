@@ -9,6 +9,7 @@ password = Passowrd1
 sender_email = sender@gmail.com
 receiver_email = receiver@gmail.com
 email_server = smtp.gmail.com
+send_blank_emails = False
 
 # Local file settings
 [files]

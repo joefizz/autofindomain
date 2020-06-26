@@ -36,6 +36,7 @@ password = parser['email']['password']
 sender_email = parser['email']['sender_email']
 receiver_email = parser['email']['receiver_email']
 email_server = parser['email']['email_server']
+send_blank_emails = parser['email']['send_blank_emails'].lower()
 
 # local file settings
 programs = parser['files']['programs']
@@ -60,6 +61,8 @@ def subEnumerate(program):
 
 
 def subTrack(program):
+	new_domain_count = 0
+	new_domain_total = 0
 	f = open("programs/" + program + "/domains.txt")
 	for domain in f:
 		domain = domain.rstrip('\n')
@@ -72,13 +75,16 @@ def subTrack(program):
 			os.system("cp "+path+"_latest.txt "+path+"_new.txt")
 		else:
 			os.system("comm -23 "+path+"_latest.txt "+path+"_all.txt > "+path+"_new.txt")
-			print("New subdomains for "+domain+" saved to "+path+"_new.txt")
+			new_domain_count = os.system("wc -l "+path+"_new.txt")
+			print("*** "+str(new_domain_count)+" new subdomains for "+domain+" saved to "+path+"_new.txt")
+			new_domain_total += new_domain_count
 			os.system("cp "+path+"_all.txt "+path+"_temp.txt")
 			os.system("cat "+path+"_new.txt >> "+path+"_temp.txt")
 			os.system("sort -u "+path+"_temp.txt > "+path+"_all.txt")
 		print("Newly discovered subdomains added to all")
 	os.system("echo 'New subdomains for "+program+":' > programs/"+program+"/report.txt")
 	os.system("cat programs/"+program+"/*_new.txt >> programs/"+program+"/report.txt")
+	return new_domain_total
 
 """
 def subReport(program):
@@ -140,8 +146,9 @@ if (sys.argv[1]) == "enum":
 		program = program.rstrip('\n')
 		print("program = " + program)
 		subEnumerate(program)
-		subTrack(program)
-		subReport(program)
+		new_domains = subTrack(program)
+		if send_blank_emails == 'true' and new_domains > 0:
+			subReport(program)
 	p.close()
 	exit()
 
@@ -157,8 +164,9 @@ if (sys.argv[1]) == "program":
 	program = sys.argv[2].rstrip('\n')
 	print("program = " + program)
 	subEnumerate(program)
-	subTrack(program)
-	subReport(program)
+	new_domains = subTrack(program)
+	if send_blank_emails == 'true' and new_domains > 0:
+		subReport(program)
 	exit()
 
 if (sys.argv[1]) == "add":
@@ -169,6 +177,7 @@ if (sys.argv[1]) == "add":
 	# Check program does not already exist in programs.txt and add it if not
 	p = open(programs)
 	for program in p:
+		program = program.rstrip('\n')
 		if program == newProgram:
 			print("Program " + newProgram +" already exists")
 			exit()
