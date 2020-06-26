@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import os, sys, smtplib, ssl, configparser, shutil
+import os, sys, smtplib, ssl, configparser, shutil, itertools, threading, time
 from email.mime.text import MIMEText 
 from email.mime.message import MIMEMessage
 from email.mime.multipart import MIMEMultipart
@@ -51,12 +51,36 @@ def subEnumerate(program):
 	for domain in f:
 		domain = domain.rstrip('\n')
 		path="programs/"+program+"/"+domain
-		print("\n*** enumerating "+domain)
+
+
+		done = False
+		#here is the animation
+		def animate():
+			for c in itertools.cycle(['*    ', '**   ', '***  ', '**** ', '*****', ' ****', '  ***', '   **', '    *', '   **', '  ***', ' ****', '*****', '**** ', '***  ', '**   ']):
+				if done:
+					break
+				sys.stdout.write('\r*** enumerating '+domain+' ' + c)
+				sys.stdout.flush()
+				time.sleep(0.1)
+		sys.stdout.write('\rDone!     ')
+
+		t = threading.Thread(target=animate)
+		t.daemon=True
+		t.start()
 		if linux == "true":
-			os.system("./findomain-linux -q -t "+domain+" -u out.txt")
+			os.system("./findomain-linux -q -t "+domain+" -u out.txt /dev/null")
 		if not linux == "true":
-			os.system("findomain -q -t "+domain+" -u out.txt")
-		os.system("sort -u out.txt > "+path+"_latest.txt")
+			os.system("findomain -q -t "+domain+" -u out.txt > /dev/null")
+		#long process here
+		done = True
+
+
+
+
+		print("\n*** enumerating "+domain)
+
+
+
 		print("Latest subdomain results available in "+path+"_latest.txt")
 
 
@@ -75,7 +99,7 @@ def subTrack(program):
 			os.system("cp "+path+"_latest.txt "+path+"_new.txt")
 		else:
 			os.system("comm -23 "+path+"_latest.txt "+path+"_all.txt > "+path+"_new.txt")
-			new_domain_count = os.system("wc -l "+path+"_new.txt")
+			new_domain_count = sum(1 for line in open(path+"_new.txt"))
 			print("*** "+str(new_domain_count)+" new subdomains for "+domain+" saved to "+path+"_new.txt")
 			new_domain_total += new_domain_count
 			os.system("cp "+path+"_all.txt "+path+"_temp.txt")
@@ -162,7 +186,7 @@ if (sys.argv[1]) == "program":
 			os.system("rm -f ./findomain-linux")
 		os.system("wget https://github.com/Edu4rdSHL/findomain/releases/latest/download/findomain-linux -q --show-progress; chmod +x findomain-linux")
 	program = sys.argv[2].rstrip('\n')
-	print("program = " + program)
+	print("\n\n *** Program = " + program)
 	subEnumerate(program)
 	new_domains = subTrack(program)
 	if send_blank_emails == 'true' and new_domains > 0:
