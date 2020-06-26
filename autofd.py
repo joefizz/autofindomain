@@ -68,7 +68,7 @@ def subEnumerate(program):
 		t.daemon=True
 		t.start()
 		if linux == "true":
-			os.system("./findomain-linux -q -t "+domain+" -u out.txt /dev/null")
+			os.system("./findomain-linux -q -t "+domain+" -u out.txt > /dev/null")
 		if not linux == "true":
 			os.system("findomain -q -t "+domain+" -u out.txt > /dev/null")
 		#long process here
