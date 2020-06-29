@@ -34,6 +34,7 @@ sender_email = parser['email']['sender_email']
 receiver_email = parser['email']['receiver_email']
 email_server = parser['email']['email_server']
 send_blank_emails = parser['email']['send_blank_emails'].lower()
+send_attachments = parser['email']['send_attachments'].lower()
 
 # local file settings
 programs = parser['files']['programs']
@@ -129,14 +130,15 @@ def subReport(program):
 	msg['From'] = sender_email
 	msg['To'] = receiver_email
 	msg.attach(MIMEText(mail_content, 'plain'))
-	for file in filenames:
-		label = file.split("/")[2]
-		part = MIMEBase('application', 'octet-stream')
-		part.set_payload(open(file, 'rb').read())
-		encoders.encode_base64(part)
-		part.add_header('Content-Disposition', 'attachment; filename='+label)
-		msg.attach(part)
-		context = ssl.create_default_context()
+	if send_attachments == "true":
+		for file in filenames:
+			label = file.split("/")[2]
+			part = MIMEBase('application', 'octet-stream')
+			part.set_payload(open(file, 'rb').read())
+			encoders.encode_base64(part)
+			part.add_header('Content-Disposition', 'attachment; filename='+label)
+			msg.attach(part)
+	context = ssl.create_default_context()
 	with smtplib.SMTP_SSL(email_server, port, context=context) as server:
 		server.login(sender_email, password)
 		server.sendmail(sender_email, receiver_email, msg.as_string())
