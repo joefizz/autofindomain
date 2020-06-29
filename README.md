@@ -20,6 +20,14 @@ Create Gmail account and enable insecure applications (https://myaccount.google.
 
 `cp config.ini.default config.ini` and update required settings.
 
+To automate this via cron use a cron entry similar to: 
+
+```
+0 0 * * * cd /opt/autofindomain && /opt/autofindomain/autofd.py enum > /opt/autofindomain/log_`date +\%d-\%m-\%y:\%H-\%M`.txt
+```
+
+This will have it run every midnight and create a log file for each run. (These can get quite large and will need a manual cleanup)
+
 ## Features:
 
 `enum` - downloads latest findomain(linux only) and enumerates all the root domains stored with programs. tracks the changes and sends email alerting to all subdomain changes.
