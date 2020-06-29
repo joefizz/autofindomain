@@ -1,7 +1,3 @@
-# OS settings - Set to true if using linux.  leave False if using Mac OS
-[OS]
-linux = False
-
 # Email settings
 [email]
 port = 465

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import os, sys, smtplib, ssl, configparser, shutil, itertools, threading, time
+import os, sys, smtplib, ssl, configparser, shutil, itertools, threading, time, platform
 from email.mime.text import MIMEText 
 from email.mime.message import MIMEMessage
 from email.mime.multipart import MIMEMultipart
@@ -26,9 +26,6 @@ if os.path.isfile('config.ini') == False:
 
 parser = configparser.ConfigParser()
 parser.read('config.ini')
-
-# OS settings
-linux = parser['OS']['linux'].lower()
 
 # email settings
 port = parser['email']['port']
@@ -144,7 +141,13 @@ def subReport(program):
 		server.login(sender_email, password)
 		server.sendmail(sender_email, receiver_email, msg.as_string())
 
-
+if platform.system() == "Linux":
+	linux = "true"
+elif platform.system() == "Darwin":
+	linux = "false"
+else:
+	print("AutoFD currently only works on mac and Linux.")
+	exit()
 
 if len(sys.argv) < 2:
 	print("autofd usage\n\n./autofd.py <option>\n\nOptions: enum, add, del, list, email, purge\n")
