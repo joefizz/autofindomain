@@ -165,7 +165,9 @@ if (sys.argv[1]) == "enum":
 		print("\n\n*** Program = " + program)
 		subEnumerate(program)
 		new_domains = subTrack(program)
-		if send_blank_emails == 'true' and new_domains > 0:
+		print("--- send_blank_emails: "+send_blank_emails)
+		print("--- new_domains: "+new_domains)
+		if send_blank_emails == 'false' and new_domains > 0:
 			subReport(program)
 	p.close()
 	exit()
@@ -183,7 +185,9 @@ if (sys.argv[1]) == "program":
 	print("\n\n *** Program = " + program)
 	subEnumerate(program)
 	new_domains = subTrack(program)
-	if send_blank_emails == 'true' and new_domains > 0:
+	print("--- send_blank_emails: "+send_blank_emails)
+	print("--- new_domains: "+str(new_domains))
+	if send_blank_emails == 'false' and new_domains > 0:
 		subReport(program)
 	exit()
 
