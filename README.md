@@ -28,6 +28,8 @@ Create Gmail account and enable insecure applications (https://myaccount.google.
 
 `delete` - deletes a program from the programs.txt file but leaves the program folder intact.
 
+`list` - list all existing programs and associated root domains currently configured.
+
 `purge` - deletes folders for all programs that are NOT in the programs.txt file.
 
 `program <program_name>` - run against just one program from programs.txt rather than all of them.  Will error out if the program doesn't already exist.
