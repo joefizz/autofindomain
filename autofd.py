@@ -71,7 +71,7 @@ def subEnumerate(program):
 			os.system("./findomain-linux -q -t "+domain+" -u out.txt > /dev/null")
 		if not linux == "true":
 			os.system("findomain -q -t "+domain+" -u out.txt > /dev/null")
-		#long process here
+		os.system("sort -u out.txt > "+path+"_latest.txt")
 		done = True
 
 
