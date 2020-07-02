@@ -171,7 +171,7 @@ if (sys.argv[1]) == "enum":
 		subEnumerate(program)
 		new_domains = subTrack(program)
 		print("--- send_blank_emails: "+send_blank_emails)
-		print("--- new_domains: "+new_domains)
+		print("--- new_domains: "+str(new_domains))
 		if send_blank_emails == 'false' and new_domains > 0:
 			subReport(program)
 	p.close()
