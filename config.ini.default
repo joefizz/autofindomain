@@ -16,3 +16,19 @@ programs = ./programs.txt
 # DNS updater
 #[DNS]
 #source = https://public-dns.info/nameserver/gb.txt
+
+# NMAP Settings
+[nmap]
+nmap_on = True
+nmap_arguments = -T4,-A,--top-ports 1000,-v
+run_on_new_programs = false
+
+# Aquatone settings
+[aquatone]
+aquatone_on = true
+aquatone_web_path = /home/joseph/downloads/aquatone
+run_on_new_programs = false
+
+# Colour settings
+[colours]
+colours = true
