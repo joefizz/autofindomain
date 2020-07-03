@@ -385,10 +385,7 @@ def main():
 
 	if platform.system() == "Linux":
 		linux = "true"
-		if os.geteuid() != 0:
-			print(talert,"*** autoFD on Linux requires running as sudo.  \nThis is to improve nmap scan speed, but more importantly to ensure permissions for various things work.",tend)
-			if not input("\n  Enter YES to continue without sudo and watch the world burn: ").lower() == 'yes':
-				exit()
+
 	elif platform.system() == "Darwin":
 		linux = "false"
 	else:
@@ -400,6 +397,11 @@ def main():
 		exit()
 
 	if (sys.argv[1]).lower() == "enum" or (sys.argv[1]).lower() == "program":
+		if platform.system() == "Linux":
+			if os.geteuid() != 0:
+				print(talert,"*** autoFD on Linux requires running as sudo.  \nThis is to improve nmap scan speed, but more importantly to ensure permissions for various things work.",tend)
+				if not input("\n  Enter YES to continue without sudo and watch the world burn: ").lower() == 'yes':
+					exit()
 		if os.path.isfile(programs) == False:
 			print(tbad,"No programs to enumerate.  Have you run `./autofindomain.py add`  ?",tend)
 			exit()
