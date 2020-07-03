@@ -387,7 +387,7 @@ def main():
 		linux = "true"
 		if os.geteuid() != 0:
 			print(talert,"autoFD on Linux requires running as sudo.  \nThis is to improve nmap scan speed, but more importantly to ensure permissions for various things work.",tend)
-			if not prompt("Enter YES to continue without sudo").lower() == 'yes':
+			if not input("Enter YES to continue without sudo").lower() == 'yes':
 				exit()
 	elif platform.system() == "Darwin":
 		linux = "false"
