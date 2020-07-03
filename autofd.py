@@ -298,7 +298,7 @@ def subAquatone(program):
 	for f in os.listdir(screendir):
 		os.chmod(os.path.join(dir, f),0o744)
 
-'''
+"""
 	try:
 		shutil.rmtree(aquatone_web_path+'/'+program+'/aquatone_report.html')
 	except:
@@ -323,7 +323,7 @@ def subAquatone(program):
 	shutil.move('./programs/'+program+'/screenshots', aquatone_web_path+'/'+program+'/')
 	shutil.move('./programs/'+program+'/html', aquatone_web_path+'/'+program+'/')
 	shutil.move('./programs/'+program+'/headers', aquatone_web_path+'/'+program+'/')
-'''
+"""
 #	done = True
 
 	print(tgood,"Latest aquatone results available in "+aquatone_web_path,tend)
