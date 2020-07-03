@@ -336,7 +336,7 @@ def main():
 		elif (sys.argv[1]).lower() == "program":
 			program = sys.argv[2].rstrip('\n')
 
-			file = open(sys.argv[2], "r")
+			file = open(programs, "r")
 			count = 0
 			for line in file:
 			     if re.search(program, line):
