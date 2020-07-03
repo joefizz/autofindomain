@@ -298,8 +298,8 @@ def subAquatone(program):
 	for f in os.listdir(screendir):
 		os.chmod(os.path.join(dir, f),0o744)
 
-"""
-	try:
+
+"""	try:
 		shutil.rmtree(aquatone_web_path+'/'+program+'/aquatone_report.html')
 	except:
 		print(tnormal, aquatone_web_path+'/'+program+'/aquatone_report.html does not exist, no need to delete', tend)
