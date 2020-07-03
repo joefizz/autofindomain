@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 import os, sys, smtplib, ssl, configparser, shutil, itertools, threading, time, platform, subprocess, re
+import xml.etree.ElementTree as ET
+from datetime import datetime
 from email.mime.text import MIMEText 
 from email.mime.message import MIMEMessage
 from email.mime.multipart import MIMEMultipart
@@ -26,6 +28,8 @@ if os.path.isfile('config.ini') == False:
 	print("config.ini file does not exist. Please copy config.ini.default to config.ini and update settings to suit")
 	exit()
 
+now=datetime.now()
+timestamp = now.strftime("%d-%m-%Y_%H-%M-%S")
 parser = configparser.ConfigParser()
 parser.read('config.ini')
 
@@ -54,8 +58,8 @@ nmap_new = parser['nmap']['run_on_new_programs'].lower()
 aquatone_on = parser['aquatone']['aquatone_on'].lower()
 aquatone_web_path = parser['aquatone']['aquatone_web_path']
 aquatone_new = parser['aquatone']['run_on_new_programs'].lower()
-
-
+aquatone_nmap = parser['aquatone']['aquatone_nmap'].lower()
+aquatone_http_timeout = parser['aquatone']['aquatone_http_timeout']
 # Colour settings
 colours = parser['colours']['colours'].lower()
 
@@ -75,6 +79,8 @@ else:
 	tbad = '\033[m'
 	talert = '\033[m'
 tend = '\033[m'
+
+print(tnormal,"Timestamp: "+timestamp,tend)
 
 # variable to record if current program is new (1 for mew, 0 for old)
 new_program = 0
@@ -140,7 +146,14 @@ def subTrack(program):
 	return new_domain_total
 
 def subNmap(program):
-	print(tnormal,"--- beginning NMAP scans of all new subdomains discovered for "+program,tend)
+	print(tnormal,"--- Removing historic nmap files from "+program+" folder.",tend)
+	dir = "./programs/"+program
+	for f in os.listdir(dir):
+		if re.search('nmap', f):
+			print("    deleting: "+f)
+			os.remove(os.path.join(dir, f))	
+
+	print(tnormal,"--- Beginning NMAP scans of all new subdomains discovered for "+program,tend)
 	f = open("programs/" + program + "/domains.txt")
 	port_count = 0
 	for domain in f:
@@ -167,7 +180,7 @@ def subNmap(program):
 			t = threading.Thread(target=animate)
 			t.daemon=True
 			nmap_args.append('-oA')
-			nmap_args.append(path+'_nmap')
+			nmap_args.append('programs/'+program+'/'+subdomain+'_nmap_'+timestamp)
 			nmap_args.append(subdomain)
 			nmap_string = ' '.join(nmap_args)
 			print('\n--- attempting command: nmap' + nmap_string)
@@ -178,58 +191,151 @@ def subNmap(program):
 				proc = subprocess.call(['nmap']+nmap_args, stdout=FNULL, stderr=subprocess.STDOUT)
 			except OSError as e:
 				print (e.output)
-			shutil.move(path+'_nmap.nmap', path+'_nmap.txt')
-			file = open(path+'_nmap.gnmap', "r")
+			shutil.move('programs/'+program+'/'+subdomain+'_nmap_'+timestamp+'.nmap', path+'_nmap_'+timestamp+'.txt')
+			file = open('programs/'+program+'/'+subdomain+'_nmap_'+timestamp+'.gnmap', "r")
 			for line in file:
 				line = line.lower()
 				if re.search('open', line):
 					port_count += 1
 			done = True
 
-			print(tgood,"Latest nmap results available in "+path+"_nmap.{txt,gnmap,xml}",tend)
+			print(tgood,"Latest nmap results available in "+path+"_nmap_"+timestamp+".{txt,gnmap,xml}",tend)
+	xmlFiles = []
+
+	dir = "./programs/"+program
+	for f in os.listdir(dir):
+		if f.lower().endswith('_nmap_'+timestamp+'.xml'):
+			xmlFiles.append(os.path.join(dir, f))
+
+	xmlMerge(xmlFiles, program)
+
 	return port_count
+
+def xmlMerge(xmlFiles, program):
+
+	hosts_count = 0
+
+	# Check to ensute we have work to do
+	if not xmlFiles:
+		print("No XML files were found ... No work to do")
+		exit()
+
+	# Create the Merged filename
+	path="programs/"+program
+
+	mergeFile = path+"/nmap_merged_" + timestamp + ".xml"
+
+	# Add Header to mergefile
+	nMap_Header  = '<?xml version="1.0" encoding="UTF-8"?>\n'
+	nMap_Header += '<!DOCTYPE nmaprun>\n'
+	nMap_Header += '<?xml-stylesheet href="file:///usr/local/bin/../share/nmap/nmap.xsl" type="text/xsl"?>\n'
+	nMap_Header += '<nmaprun scanner="nmap" args="nmap -T4 -&#45;top-ports 10 -oA programs/nz420/nz420.com_nmap_03-07-2020_15-42-57 nz420.com" start="1593787378" startstr="Fri Jul  3 15:42:58 2020" version="7.80" xmloutputversion="1.04">\n'
+	nMap_Header += '<scaninfo type="connect" protocol="tcp" numservices="10" services="21-23,25,80,110,139,443,445,3389"/>\n'
+	nMap_Header += '<verbose level="0"/>\n'
+	nMap_Header += '<debugging level="0"/>\n'
+
+	mFile = open(mergeFile, "w")  
+	mFile.write(nMap_Header) 
+	mFile.close()
+
+	for xml in xmlFiles:
+		h = 0
+		with open(mergeFile, mode = 'a', encoding='utf-8') as mergFile:
+			with open(xml) as f:
+				nMapXML = ET.parse(f)
+				for host in nMapXML.findall('host'):
+					h += 1
+					cHost = ET.tostring(host, encoding='unicode', method='xml') 
+					mergFile.write(cHost)
+					mergFile.flush()
+		os.remove(xml)	
+		hosts_count += h
+
+	# Add Footer to mergefile
+	print('')
+	print ("Output XML File:", os.path.abspath(mergeFile))
+	nMap_Footer  = '<runstats><finished time="1" timestr="Wed Sep  0 00:00:00 0000" elapsed="0" summary="Nmap done at Wed Sep  0 00:00:00 0000; ' + str(hosts_count) + ' IP address scanned in 0.0 seconds" exit="success"/>\n'
+	nMap_Footer += '</runstats>\n'
+	nMap_Footer += '</nmaprun>\n'
+
+	mFile = open(mergeFile, "a")  
+	mFile.write(nMap_Footer) 
+	mFile.close()
 
 def subAquatone(program):
 	print(tgood,"--- beginning aquatone enumeration of all new subdomains discovered for "+program,tend)
 
-	f = open("programs/" + program + "/domains.txt")
-	for domain in f:
-		newSubdomains = []
-		domain = domain.rstrip('\n')
-		path="programs/"+program+"/"+domain
-		s = open(path+"_new.txt")
-		for subdomain in s:
-			subdomain=subdomain.rstrip('\n')
-			newSubdomains.append(subdomain)
+	done = False
+	#here is the animation
+	def animate():
+		for c in itertools.cycle(['*    ', '**   ', '***  ', '**** ', '*****', ' ****', '  ***', '   **', '    *', '   **', '  ***', ' ****', '*****', '**** ', '***  ', '**   ']):
+			if done:
+				break
+			sys.stdout.write('\r*** aquatoning '+program+' ' + c)
+			sys.stdout.flush()
+			time.sleep(0.1)
 
-		for subdomain in newSubdomains:
-			done = False
-			#here is the animation
-			def animate():
-				for c in itertools.cycle(['*    ', '**   ', '***  ', '**** ', '*****', ' ****', '  ***', '   **', '    *', '   **', '  ***', ' ****', '*****', '**** ', '***  ', '**   ']):
-					if done:
-						break
-					sys.stdout.write('\r*** aquatoning '+subdomain+' ' + c)
-					sys.stdout.flush()
-					time.sleep(0.1)
+	t = threading.Thread(target=animate)
+	t.daemon=True
+	if animation_on == 'true':
+		t.start()
 
-			t = threading.Thread(target=animate)
-			t.daemon=True
-			if animation_on == 'true':
-				t.start()
-			try:
-				cat = subprocess.Popen(('cat', path+'_nmap.xml'), stdout=subprocess.PIPE)
-				aqua = subprocess.call(('aquatone', '-nmap', '-out', path, '-silent'), stdin=cat.stdout)
-			except OSError as e:
-				print (e.output)
-			try:
-				shutil.move(path+'/aquatone_report.html', aquatone_web_path+'/'+subdomain+'_aquatone_report.html')
-			except:
-				Print(tbad,"Error copying file",tend)
-			done = True
+	if aquatone_nmap == 'true':
+		try:
+			cat = subprocess.Popen(('cat', './programs/'+program+'/nmap_merged_'+timestamp+'.xml'), stdout=subprocess.PIPE)
+			aqua = subprocess.call(('aquatone', '-nmap', '-out', './programs/'+program, '-silent', '-http-timeout', aquatone_http_timeout), stdin=cat.stdout)
+		except OSError as e:
+			print (e.output)
+	else:
+		try:
+			cat = subprocess.Popen(('cat', './programs/'+program+'/nmap_merged_'+timestamp+'.xml'), stdout=subprocess.PIPE)
+			aqua = subprocess.call(('aquatone', '-ports', 'xlarge', '-out', './programs/'+program, '-silent', '-http-timeout', aquatone_http_timeout), stdin=cat.stdout)
+		except OSError as e:
+			print (e.output)
 
+	try:
+		shutil.rmtree(aquatone_web_path+'/'+program+'/aquatone_report.html')
+	except:
+		print(tnormal, aquatone_web_path+'/'+program+'/aquatone_report.html does not exist, no need to delete', tend)
+	try:
+		shutil.rmtree(aquatone_web_path+'/'+program+'/html')
+	except:
+		print(tnormal, aquatone_web_path+'/'+program+'/html does not exist, no need to delete', tend)
+	try:
+		shutil.rmtree(aquatone_web_path+'/'+program+'/headers')
+	except:
+		print(tnormal, aquatone_web_path+'/'+program+'/headers does not exist, no need to delete', tend)
+	try:
+		shutil.rmtree(aquatone_web_path+'/'+program+'/screenshots')
+	except:
+		print(tnormal, aquatone_web_path+'/'+program+'/screenshots does not exist, no need to delete', tend)
+	try:
+		os.makedirs(aquatone_web_path+'/'+program)
+	except:
+		print(tnormal,aquatone_web_path+'/'+program+' already exists, no need to create',tend)
+	shutil.move('./programs/'+program+'/aquatone_report.html', aquatone_web_path+'/'+program+'/aquatone_report.html')
+	shutil.move('./programs/'+program+'/screenshots', aquatone_web_path+'/'+program+'/')
+	shutil.move('./programs/'+program+'/html', aquatone_web_path+'/'+program+'/')
+	shutil.move('./programs/'+program+'/headers', aquatone_web_path+'/'+program+'/')
 
-			print(tgood,"Latest aquatone results available in "+aquatone_web_path,tend)
+	done = True
+
+	print(tgood,"Latest aquatone results available in "+aquatone_web_path,tend)
+
+	indexFile = aquatone_web_path+'/index.html'
+	index_html = '<!DOCTYPE html>'
+	index_html += '<html>'
+	index_html += '<body>'
+	index_html += '<h2>Existing aquatone results for all programs:</h2>'
+	for f in os.listdir(aquatone_web_path):
+		if not "index.html" in f and not ".DS_Store" in f:
+			index_html += '<h4><a href="'+f+'/aquatone_report.html">'+f+'</a></br></h4>'
+	index_html += '</body>'
+	index_html += '</html>'
+
+	iFile = open(indexFile, "w")  
+	iFile.write(index_html) 
+	iFile.close()
 
 def subReport(program):
 	print(tnormal,"--- sending results email to " + receiver_email,tend)
@@ -237,9 +343,6 @@ def subReport(program):
 	mail_content = fp.read()
 	files = "programs/"+program
 	filenames = [os.path.join(files, f) for f in os.listdir(files)]
-	for x in range(len(filenames)): 
-		if not os.path.isdir(x):
-			print("Filename: "+filenames[x])
 	msg = MIMEMultipart()
 	msg['Subject'] = "findomain results for " + program
 	msg['From'] = sender_email
@@ -339,10 +442,11 @@ def main():
 			file = open(programs, "r")
 			count = 0
 			for line in file:
-			     if re.search(program, line):
-			         count+=1
-			if count > 0:
-				print(tbad,program+" does not exist in programs.txt, add with './autofd add <program name>'",tend)
+				if re.search(program, line):
+					print(line)
+					count+=1
+			if count == 0:
+				print(tbad,"Program with name '"+program+"' does not exist in programs.txt, add with './autofd add <program name>'\n",tend)
 				exit()
 
 			print("\n\n *** Program = " + program)

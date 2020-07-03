@@ -1,15 +1,20 @@
 # Email settings
 [email]
 port = 465
-password = Passowrd1
-sender_email = sender@gmail.com
-receiver_email = receiver@gmail.com
+password = Password123
+sender_email = email@gmail.com
+receiver_email = email@gmail.com
 email_server = smtp.gmail.com
+
+# if no results do you still want to send a notification email?
 send_blank_emails = False
-send_attachments = False
+
+# do you want to send all scan files as attachments with the notification email
+send_attachments = True
 
 # Local file settings
 [files]
+# file containing active programs (best not to change this)
 programs = ./programs.txt
 #resolvers = ./resolvers.txt
 
@@ -19,20 +24,35 @@ programs = ./programs.txt
 
 # NMAP Settings
 [nmap]
-nmap_on = True
-nmap_arguments = -T4,--top-ports 1000
+# Do you want to send all new findings to nmap?
+nmap_on = true
+
+# arguments to send to nmap - DO NOT PUT SPACES BEFORE OR AFTER COMMAS
+nmap_arguments = -T4,--top-ports 10
+
+# Do you want to run nmap on new programs?  This can take a loooooooooong time if it is a large program as it will scan all discovered subdomains.
 run_on_new_programs = false
 
 # Aquatone settings
 [aquatone]
+# Do you want to send all new findings to aquatone?
 aquatone_on = true
-aquatone_web_path = /var/www/html/aquatone
+
+# The path to the web directory where you would like the HTML files from aquatone to go to
+aquatone_web_path = /var/www/html/
+
+# Do you want to run nmap on new programs?  This can take a loooooooooong time if it is a large program as it will scan all discovered subdomains.
 run_on_new_programs = false
 
-# Colour settings
+# Send nmap results to aquatone?  probably leave this as true.  If set to false aquatone will do '-ports xlarge'
+aquatone_nmap = true
+aquatone_http_timeout = 5000
+
+# Use custom colours
 [colours]
 colours = true
 
 # General settings
 [general]
+# I'd recommend turning this off if you are sending the output to logs, otherwise they get big and messy
 animation_on = true
