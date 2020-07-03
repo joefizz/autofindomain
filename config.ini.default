@@ -20,15 +20,19 @@ programs = ./programs.txt
 # NMAP Settings
 [nmap]
 nmap_on = True
-nmap_arguments = -T4,-A,--top-ports 1000,-v
+nmap_arguments = -T4,--top-ports 1000
 run_on_new_programs = false
 
 # Aquatone settings
 [aquatone]
 aquatone_on = true
-aquatone_web_path = /home/joseph/downloads/aquatone
+aquatone_web_path = /var/www/html/aquatone
 run_on_new_programs = false
 
 # Colour settings
 [colours]
 colours = true
+
+# General settings
+[general]
+animation_on = true

@@ -59,6 +59,9 @@ aquatone_new = parser['aquatone']['run_on_new_programs'].lower()
 # Colour settings
 colours = parser['colours']['colours'].lower()
 
+# General settings
+animation_on = parser['general']['animation_on'].lower()
+
 # Set colours for output
 
 if colours == 'true':
@@ -97,7 +100,8 @@ def subEnumerate(program, linux):
 
 		t = threading.Thread(target=animate)
 		t.daemon=True
-		t.start()
+		if animation_on == 'true':
+			t.start()
 		if linux == "true":
 			os.system("./findomain-linux -q -t "+domain+" -u out.txt > /dev/null")
 		if not linux == "true":
@@ -167,7 +171,8 @@ def subNmap(program):
 			nmap_args.append(subdomain)
 			nmap_string = ' '.join(nmap_args)
 			print('\n--- attempting command: nmap' + nmap_string)
-			t.start()
+			if animation_on == 'true':
+				t.start()
 			try:
 				FNULL = open(os.devnull, 'w')
 				proc = subprocess.call(['nmap']+nmap_args, stdout=FNULL, stderr=subprocess.STDOUT)
@@ -210,7 +215,8 @@ def subAquatone(program):
 
 			t = threading.Thread(target=animate)
 			t.daemon=True
-			t.start()
+			if animation_on == 'true':
+				t.start()
 			try:
 				cat = subprocess.Popen(('cat', path+'_nmap.xml'), stdout=subprocess.PIPE)
 				aqua = subprocess.call(('aquatone', '-nmap', '-out', path, '-silent'), stdin=cat.stdout)
@@ -256,6 +262,10 @@ def subReport(program):
 def main():
 
 	global new_program
+
+	if sys.version_info <= (3, 0):
+		print(tbad,"This script requires Python 3.4+\n",tend)
+		sys.exit(1)
 
 	if nmap_on == 'true':
 		try:
