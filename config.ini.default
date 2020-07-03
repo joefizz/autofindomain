@@ -28,7 +28,7 @@ programs = ./programs.txt
 nmap_on = true
 
 # arguments to send to nmap - DO NOT PUT SPACES BEFORE OR AFTER COMMAS
-nmap_arguments = -T4,--top-ports 10
+nmap_arguments = -T4,--top-ports 100
 
 # Do you want to run nmap on new programs?  This can take a loooooooooong time if it is a large program as it will scan all discovered subdomains.
 run_on_new_programs = false
