@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import os, sys, smtplib, ssl, configparser, shutil, itertools, threading, time, platform, subprocess, re
+import os, sys, smtplib, ssl, configparser, shutil, itertools, threading, time, platform, subprocess, re, stat
 import xml.etree.ElementTree as ET
 from datetime import datetime
 from email.mime.text import MIMEText 
@@ -265,20 +265,21 @@ def xmlMerge(xmlFiles, program):
 def subAquatone(program):
 	print(tgood,"--- beginning aquatone enumeration of all new subdomains discovered for "+program,tend)
 
-	done = False
-	#here is the animation
-	def animate():
-		for c in itertools.cycle(['*    ', '**   ', '***  ', '**** ', '*****', ' ****', '  ***', '   **', '    *', '   **', '  ***', ' ****', '*****', '**** ', '***  ', '**   ']):
-			if done:
-				break
-			sys.stdout.write('\r*** aquatoning '+program+' ' + c)
-			sys.stdout.flush()
-			time.sleep(0.1)
+#	done = False
 
-	t = threading.Thread(target=animate)
-	t.daemon=True
-	if animation_on == 'true':
-		t.start()
+	#here is the animation
+#	def animate():
+#		for c in itertools.cycle(['*    ', '**   ', '***  ', '**** ', '*****', ' ****', '  ***', '   **', '    *', '   **', '  ***', ' ****', '*****', '**** ', '***  ', '**   ']):
+#			if done:
+#				break
+#			sys.stdout.write('\r*** aquatoning '+program+' ' + c)
+#			sys.stdout.flush()
+#			time.sleep(0.1)
+#
+#	t = threading.Thread(target=animate)
+#	t.daemon=True
+#	if animation_on == 'true':
+#		t.start()
 
 	if aquatone_nmap == 'true':
 		try:
@@ -318,7 +319,7 @@ def subAquatone(program):
 	shutil.move('./programs/'+program+'/html', aquatone_web_path+'/'+program+'/')
 	shutil.move('./programs/'+program+'/headers', aquatone_web_path+'/'+program+'/')
 
-	done = True
+#	done = True
 
 	print(tgood,"Latest aquatone results available in "+aquatone_web_path,tend)
 
@@ -336,7 +337,7 @@ def subAquatone(program):
 
 	iFile = open(indexFile, "w")  
 	iFile.write(index_html) 
-	iFile.close()
+	iFile.close()			
 
 def subReport(program):
 	print(tnormal,"--- sending results email to " + receiver_email,tend)
@@ -443,7 +444,7 @@ def main():
 			file = open(programs, "r")
 			count = 0
 			for line in file:
-				if re.search(program, line):
+				if re.search(r'\b'+program+r'\b', line):
 					print(line)
 					count+=1
 			if count == 0:
