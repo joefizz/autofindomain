@@ -299,30 +299,30 @@ def subAquatone(program):
 		os.chmod(os.path.join(screendir, f),0o744)
 
 
-#	try:
-#		shutil.rmtree(aquatone_web_path+'/'+program+'/aquatone_report.html')
-#	except:
-#		print(tnormal, aquatone_web_path+'/'+program+'/aquatone_report.html does not exist, no need to delete', tend)
-#	try:
-#		shutil.rmtree(aquatone_web_path+'/'+program+'/html')
-#	except:
-#		print(tnormal, aquatone_web_path+'/'+program+'/html does not exist, no need to delete', tend)
-#	try:
-#		shutil.rmtree(aquatone_web_path+'/'+program+'/headers')
-#	except:
-#		print(tnormal, aquatone_web_path+'/'+program+'/headers does not exist, no need to delete', tend)
-#	try:
-#		shutil.rmtree(aquatone_web_path+'/'+program+'/screenshots')
-#	except:
-#		print(tnormal, aquatone_web_path+'/'+program+'/screenshots does not exist, no need to delete', tend)
-#	try:
-#		os.makedirs(aquatone_web_path+'/'+program)
-#	except:
-#		print(tnormal,aquatone_web_path+'/'+program+' already exists, no need to create',tend)
-#	shutil.move('./programs/'+program+'/aquatone_report.html', aquatone_web_path+'/'+program+'/aquatone_report.html')
-#	shutil.move('./programs/'+program+'/screenshots', aquatone_web_path+'/'+program+'/')
-#	shutil.move('./programs/'+program+'/html', aquatone_web_path+'/'+program+'/')
-#	shutil.move('./programs/'+program+'/headers', aquatone_web_path+'/'+program+'/')
+	try:
+		shutil.rmtree(aquatone_web_path+'/'+program+'/aquatone_report.html')
+	except:
+		print(tnormal, aquatone_web_path+'/'+program+'/aquatone_report.html does not exist, no need to delete', tend)
+	try:
+		shutil.rmtree(aquatone_web_path+'/'+program+'/html')
+	except:
+		print(tnormal, aquatone_web_path+'/'+program+'/html does not exist, no need to delete', tend)
+	try:
+		shutil.rmtree(aquatone_web_path+'/'+program+'/headers')
+	except:
+		print(tnormal, aquatone_web_path+'/'+program+'/headers does not exist, no need to delete', tend)
+	try:
+		shutil.rmtree(aquatone_web_path+'/'+program+'/screenshots')
+	except:
+		print(tnormal, aquatone_web_path+'/'+program+'/screenshots does not exist, no need to delete', tend)
+	try:
+		os.makedirs(aquatone_web_path+'/'+program)
+	except:
+		print(tnormal,aquatone_web_path+'/'+program+' already exists, no need to create',tend)
+	shutil.move('./programs/'+program+'/aquatone_report.html', aquatone_web_path+'/'+program+'/aquatone_report.html')
+	shutil.move('./programs/'+program+'/screenshots', aquatone_web_path+'/'+program+'/')
+	shutil.move('./programs/'+program+'/html', aquatone_web_path+'/'+program+'/')
+	shutil.move('./programs/'+program+'/headers', aquatone_web_path+'/'+program+'/')
 
 #	done = True
 
