@@ -329,7 +329,8 @@ def subAquatone(program):
 	index_html += '<h2>Existing aquatone results for all programs:</h2>'
 	for f in os.listdir(aquatone_web_path):
 		if not "index.html" in f and not ".DS_Store" in f:
-			index_html += '<h4><a href="'+f+'/aquatone_report.html">'+f+'</a></br></h4>'
+			if not os.path.isdir(f):
+				index_html += '<h4><a href="'+f+'/aquatone_report.html">'+f+'</a></br></h4>'
 	index_html += '</body>'
 	index_html += '</html>'
 
