@@ -183,7 +183,7 @@ def subNmap(program):
 			nmap_args.append('programs/'+program+'/'+subdomain+'_nmap_'+timestamp)
 			nmap_args.append(subdomain)
 			nmap_string = ' '.join(nmap_args)
-			print('\n--- attempting command: nmap' + nmap_string)
+			print('\n--- attempting command: nmap ' + nmap_string)
 			if animation_on == 'true':
 				t.start()
 			try:
