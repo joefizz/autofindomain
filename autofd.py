@@ -296,7 +296,7 @@ def subAquatone(program):
 
 	screendir = './programs/'+program+'/screenshots/'
 	for f in os.listdir(screendir):
-		os.chmod(os.path.join(dir, f),0o744)
+		os.chmod(os.path.join(screendir, f),0o744)
 
 
 #	try:
