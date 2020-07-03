@@ -283,13 +283,13 @@ def subAquatone(program):
 	if aquatone_nmap == 'true':
 		try:
 			cat = subprocess.Popen(('cat', './programs/'+program+'/nmap_merged_'+timestamp+'.xml'), stdout=subprocess.PIPE)
-			aqua = subprocess.call(('aquatone', '-nmap', '-out', './programs/'+program, '-silent', '-http-timeout', aquatone_http_timeout), stdin=cat.stdout)
+			aqua = subprocess.call(('aquatone', '-nmap', '-out', './programs/'+program, '-http-timeout', aquatone_http_timeout), stdin=cat.stdout)
 		except OSError as e:
 			print (e.output)
 	else:
 		try:
 			cat = subprocess.Popen(('cat', './programs/'+program+'/nmap_merged_'+timestamp+'.xml'), stdout=subprocess.PIPE)
-			aqua = subprocess.call(('aquatone', '-ports', 'xlarge', '-out', './programs/'+program, '-silent', '-http-timeout', aquatone_http_timeout), stdin=cat.stdout)
+			aqua = subprocess.call(('aquatone', '-ports', 'xlarge', '-out', './programs/'+program, '-http-timeout', aquatone_http_timeout), stdin=cat.stdout)
 		except OSError as e:
 			print (e.output)
 
