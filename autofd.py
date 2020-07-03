@@ -335,6 +335,16 @@ def main():
 
 		elif (sys.argv[1]).lower() == "program":
 			program = sys.argv[2].rstrip('\n')
+
+			file = open(sys.argv[2], "r")
+			count = 0
+			for line in file:
+			     if re.search(program, line):
+			         count+=1
+			if count > 0:
+				print(tbad,program+" does not exist in programs.txt, add with './autofd add <program name>'",tend)
+				exit()
+
 			print("\n\n *** Program = " + program)
 			subEnumerate(program,linux)
 			new_domains = subTrack(program)
