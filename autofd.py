@@ -265,22 +265,6 @@ def xmlMerge(xmlFiles, program):
 def subAquatone(program):
 	print(tgood,"--- beginning aquatone enumeration of all new subdomains discovered for "+program,tend)
 
-#	done = False
-
-	#here is the animation
-#	def animate():
-#		for c in itertools.cycle(['*    ', '**   ', '***  ', '**** ', '*****', ' ****', '  ***', '   **', '    *', '   **', '  ***', ' ****', '*****', '**** ', '***  ', '**   ']):
-#			if done:
-#				break
-#			sys.stdout.write('\r*** aquatoning '+program+' ' + c)
-#			sys.stdout.flush()
-#			time.sleep(0.1)
-#
-#	t = threading.Thread(target=animate)
-#	t.daemon=True
-#	if animation_on == 'true':
-#		t.start()
-
 	if aquatone_nmap == 'true':
 		try:
 			cat = subprocess.Popen(('cat', './programs/'+program+'/nmap_merged_'+timestamp+'.xml'), stdout=subprocess.PIPE)
@@ -323,8 +307,6 @@ def subAquatone(program):
 	shutil.move('./programs/'+program+'/screenshots', aquatone_web_path+'/'+program+'/')
 	shutil.move('./programs/'+program+'/html', aquatone_web_path+'/'+program+'/')
 	shutil.move('./programs/'+program+'/headers', aquatone_web_path+'/'+program+'/')
-
-#	done = True
 
 	print(tgood,"Latest aquatone results available in "+aquatone_web_path,tend)
 
@@ -403,6 +385,10 @@ def main():
 
 	if platform.system() == "Linux":
 		linux = "true"
+		if os.geteuid() != 0:
+			print(talert,"autoFD on Linux requires running as sudo.  \nThis is to improve nmap scan speed, but more importantly to ensure permissions for various things work.",tend)
+			if not prompt("Enter YES to continue without sudo").lower() == 'yes':
+				exit()
 	elif platform.system() == "Darwin":
 		linux = "false"
 	else:
