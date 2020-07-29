@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import os, sys, smtplib, ssl, configparser, shutil, itertools, threading, time, platform, subprocess, re, stat
+import os, sys, smtplib, ssl, configparser, shutil, itertools, threading, time, platform, subprocess, re, stat, json, requests
 import xml.etree.ElementTree as ET
 from datetime import datetime
 from email.mime.text import MIMEText 
@@ -65,6 +65,11 @@ colours = parser['colours']['colours'].lower()
 
 # General settings
 animation_on = parser['general']['animation_on'].lower()
+
+# Slack settings
+send_results_to_slack = parser['slack']['send_results_to_slack'].lower()
+slack_channel = parser['slack']['slack_channel']
+slack_oauth_token = parser['slack']['slack_oauth_token']
 
 # Set colours for output
 
@@ -351,6 +356,23 @@ def subReport(program):
 		server.login(sender_email, password)
 		server.sendmail(sender_email, receiver_email, msg.as_string())
 
+def toSlack(program):
+	print (tgood,"Sending latest data for %s to slack"%(program),tend)
+	slack_api = 'https://slack.com/api/'
+
+	f = open('./programs/'+program+'/aquatone_session.json')
+	data = json.load(f)
+	f.close()
+	for (k,v) in data.items():
+		if k == 'pages':
+			for key in v:
+				url = v[key]['url']
+				screenshotPath = v[key]['screenshotPath']
+				proxies = {"http": "http://127.0.0.1:8080", "https": "http://127.0.0.1:8080"}
+				data = {'initial_comment':'New subdomain discovered for '+program+': '+url,'channels':slack_channel}
+				headers = {'Authorization':'Bearer '+slack_oauth_token}
+				r =requests.post(slack_api+'files.upload', data, headers=headers, files={"file": (aquatone_web_path+'/'+program+'/'+screenshotPath, open(aquatone_web_path+'/'+program+'/'+screenshotPath, "rb"), "image/png")})
+
 def main():
 
 	global new_program
@@ -429,6 +451,8 @@ def main():
 							subAquatone(program)
 				if send_blank_emails == 'false' and new_domains > 0:
 					subReport(program)
+				if send_results_to_slack == 'true' and new_domains > 0:
+					toSlack(program)
 				new_program = 0
 
 		elif (sys.argv[1]).lower() == "program":
@@ -459,8 +483,23 @@ def main():
 						subAquatone(program)
 			if send_blank_emails == 'false' and new_domains > 0:
 				subReport(program)
+			if send_results_to_slack == 'true' and new_domains > 0:
+				toSlack(program)
 
 		exit()
+
+	if (sys.argv[1]) == "slack":
+		program = sys.argv[2].rstrip('\n')
+		print(tnormal,"Sending latest data for %s to slack"%(program),tend)
+		p = open(programs)
+		for line in p:
+			line = line.rstrip('\n')
+			print("line %s, program %s"%(line,program))
+			if line == program:
+				print("Program " + program +" exists")
+				toSlack(program)
+				exit()
+		p.close()
 
 
 	if (sys.argv[1]) == "add":

@@ -56,3 +56,9 @@ colours = true
 [general]
 # I'd recommend turning this off if you are sending the output to logs, otherwise they get big and messy
 animation_on = true
+
+# Slack settings -  this feature requires a slack app to be created, with the following permissions: chat.write, files.write, incoming-webhook.  it is also required to invite the app to the channel that will be used (in the slack channel type /invite app_name).  an slack bot oauth token is also required.  from the app page in slack select OAuth & Permissions from the menu on the left.
+[slack]
+send_results_to_slack = false
+slack_channel = autofd
+slack_oauth_token = xoxb-xxxxxxxxxxxxxxxxx-xxxxxxxxxxxx
