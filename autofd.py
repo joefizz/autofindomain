@@ -451,7 +451,7 @@ def main():
 							subAquatone(program)
 				if send_blank_emails == 'false' and new_domains > 0:
 					subReport(program)
-				if send_results_to_slack == 'true' and new_domains > 0 and new_program = 0:
+				if send_results_to_slack == 'true' and new_domains > 0 and new_program == 0:
 					toSlack(program)
 				new_program = 0
 
@@ -483,7 +483,7 @@ def main():
 						subAquatone(program)
 			if send_blank_emails == 'false' and new_domains > 0:
 				subReport(program)
-			if send_results_to_slack == 'true' and new_domains > 0 and new_program = 0:
+			if send_results_to_slack == 'true' and new_domains > 0 and new_program == 0:
 				toSlack(program)
 
 		exit()
