@@ -220,7 +220,7 @@ def xmlMerge(xmlFiles, program):
 
 	hosts_count = 0
 
-	# Check to ensute we have work to do
+	# Check to ensure we have work to do
 	if not xmlFiles:
 		print("No XML files were found ... No work to do")
 		exit()
@@ -234,7 +234,7 @@ def xmlMerge(xmlFiles, program):
 	nMap_Header  = '<?xml version="1.0" encoding="UTF-8"?>\n'
 	nMap_Header += '<!DOCTYPE nmaprun>\n'
 	nMap_Header += '<?xml-stylesheet href="file:///usr/local/bin/../share/nmap/nmap.xsl" type="text/xsl"?>\n'
-	nMap_Header += '<nmaprun scanner="nmap" args="nmap -T4 -&#45;top-ports 10 -oA programs/nz420/nz420.com_nmap_03-07-2020_15-42-57 nz420.com" start="1593787378" startstr="Fri Jul  3 15:42:58 2020" version="7.80" xmloutputversion="1.04">\n'
+	nMap_Header += '<nmaprun scanner="nmap" args="check config.ini" start="123" startstr="Fri Jul  3 15:42:58 2020" version="7.80" xmloutputversion="1.04">\n'
 	nMap_Header += '<scaninfo type="connect" protocol="tcp" numservices="10" services="21-23,25,80,110,139,443,445,3389"/>\n'
 	nMap_Header += '<verbose level="0"/>\n'
 	nMap_Header += '<debugging level="0"/>\n'
@@ -268,6 +268,7 @@ def xmlMerge(xmlFiles, program):
 	mFile.close()
 
 def subAquatone(program):
+	screenshots = 0
 	print(tgood,"--- beginning aquatone enumeration of all new subdomains discovered for "+program,tend)
 
 	if aquatone_nmap == 'true':
@@ -285,6 +286,7 @@ def subAquatone(program):
 
 	screendir = './programs/'+program+'/screenshots/'
 	for f in os.listdir(screendir):
+		screenshots += 1
 		os.chmod(os.path.join(screendir, f),0o744)
 
 
@@ -330,6 +332,8 @@ def subAquatone(program):
 	iFile = open(indexFile, "w")  
 	iFile.write(index_html) 
 	iFile.close()			
+
+	return screenshots
 
 def subReport(program):
 	print(tnormal,"--- sending results email to " + receiver_email,tend)
@@ -435,6 +439,7 @@ def main():
 		p = open(programs)
 
 		if (sys.argv[1]).lower() == "enum":
+			aquatone = False
 			for program in p:
 				program = program.rstrip('\n')
 				print("\n\n*** Program = " + program)
@@ -451,14 +456,16 @@ def main():
 						port_count = subNmap(program)
 					if aquatone_on == 'true' and port_count > 0:
 						if new_program == 0 or aquatone_new == 'true':
-							subAquatone(program)
+							aquatone = True
+							screenshots = subAquatone(program)
 				if send_blank_emails == 'false' and new_domains > 0:
 					subReport(program)
-				if send_results_to_slack == 'true' and new_domains > 0 and new_program == 0:
+				if send_results_to_slack == 'true' and new_domains > 0 and new_program == 0 and screenshots > 0:
 					toSlack(program)
 				new_program = 0
 
 		elif (sys.argv[1]).lower() == "program":
+			aquatone = False
 			program = sys.argv[2].rstrip('\n')
 
 			file = open(programs, "r")
@@ -486,10 +493,11 @@ def main():
 					port_count = subNmap(program)
 				if aquatone_on == 'true' and port_count > 0:
 					if new_program == 0 or aquatone_new == 'true':
-						subAquatone(program)
+						aquatone = True
+						screenshots = subAquatone(program)
 			if send_blank_emails == 'false' and new_domains > 0:
 				subReport(program)
-			if send_results_to_slack == 'true' and new_domains > 0 and new_program == 0:
+			if send_results_to_slack == 'true' and new_domains > 0 and new_program == 0 and screenshots > 0:
 				toSlack(program)
 
 		exit()
@@ -549,17 +557,14 @@ def main():
 				dw = open('./programs/'+program+'/domains.txt', 'a')
 				dr = open('./programs/'+program+'/domains.txt', 'r')
 				drlist = dr.readlines()
-				print('drlist: '+str(drlist))
 				dr.close
 				for i in sys.argv[3:]:
 					found = False
-					print(i)
 					for line in drlist:
 						line = line.rstrip('\n')
 						if line == i:
 							print(tnormal,'--- Domain %s already in program'%(i),tend)
 							found = True
-					print('found: '+str(found))
 					if not found:
 						print(tgood,'--- Adding %s to domains.txt for program %s'%(i,program),tend)
 						dw.write(i+'\n')
@@ -568,6 +573,7 @@ def main():
 				with open('./programs/'+program+'/domains.txt') as temp_file:
   					drugs = [line.rstrip('\n') for line in temp_file]
 				d = open('./programs/'+program+'/domains.txt')
+				print(tnormal,'Domain for program: '+program,tend)
 				for line in d:
 					line = line.rstrip('\n')
 					print(line)
