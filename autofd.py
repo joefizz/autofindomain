@@ -458,7 +458,7 @@ def main():
 				except Exception as e:
 					raise e
 				else:
-					for line in exlist[1:]:
+					for line in exlist:
 						if line.rstrip('\n') == program.rstrip('\n'):
 							print(tbad,'**** Program %s is in exclude list, skipping',tend)
 							exclude = True
