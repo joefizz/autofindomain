@@ -573,7 +573,7 @@ def main():
 				with open('./programs/'+program+'/domains.txt') as temp_file:
   					drugs = [line.rstrip('\n') for line in temp_file]
 				d = open('./programs/'+program+'/domains.txt')
-				print(tnormal,'Domain for program: '+program,tend)
+				print(tgood,'\nDomains for program: '+program,tend)
 				for line in d:
 					line = line.rstrip('\n')
 					print(line)
