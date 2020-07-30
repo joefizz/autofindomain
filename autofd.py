@@ -204,7 +204,7 @@ def subNmap(program):
 					port_count += 1
 			done = True
 
-			print(tgood,"Latest nmap results available in "+path+"_nmap_"+timestamp+".{txt,gnmap,xml}",tend)
+			print(tgood,'Latest nmap results available in programs/'+program+'/'+subdomain+'_nmap_'+timestamp+'.{txt,gnmap,xml}',tend)
 	xmlFiles = []
 
 	dir = "./programs/"+program
@@ -358,7 +358,11 @@ def subReport(program):
 	context = ssl.create_default_context()
 	with smtplib.SMTP_SSL(email_server, port, context=context) as server:
 		server.login(sender_email, password)
-		server.sendmail(sender_email, receiver_email, msg.as_string())
+		try:
+			server.sendmail(sender_email, receiver_email.split(','), msg.as_string())
+		except Exception as e:
+			raise e
+		
 
 def toSlack(program):
 	print (tgood,"Sending latest data for %s to slack"%(program),tend)
@@ -374,9 +378,10 @@ def toSlack(program):
 				screenshotPath = v[key]['screenshotPath']
 				IP = v[key]['addrs']
 				proxies = {"http": "http://127.0.0.1:8080", "https": "http://127.0.0.1:8080"}
-				data = {'initial_comment':'New subdomain discovered for '+program+': '+url+' - pointing to '+IP,'channels':slack_channel}
+				data = {'initial_comment':'New subdomain discovered for '+program+': '+url+' - pointing to '+str(IP),'channels':slack_channel}
 				headers = {'Authorization':'Bearer '+slack_oauth_token}
 				r =requests.post(slack_api+'files.upload', data, headers=headers, files={"file": (aquatone_web_path+'/'+program+'/'+screenshotPath, open(aquatone_web_path+'/'+program+'/'+screenshotPath, "rb"), "image/png")})
+
 
 def main():
 
@@ -424,7 +429,7 @@ def main():
 		exit()
 
 	if (sys.argv[1]).lower() == "enum" or (sys.argv[1]).lower() == "program":
-		screenshots = 0
+		
 		if platform.system() == "Linux":
 			if os.geteuid() != 0:
 				print(talert,"*** autoFD on Linux requires running as sudo.  \nThis is to improve nmap scan speed, but more importantly to ensure permissions for various things work.",tend)
@@ -443,6 +448,7 @@ def main():
 		if (sys.argv[1]).lower() == "enum":
 			aquatone = False
 			for program in p:
+				screenshots = 0
 				program = program.rstrip('\n')
 				print("\n\n*** Program = " + program)
 				if sum(1 for line in open('./programs/'+program+'/domains.txt')) < 1:
@@ -468,6 +474,7 @@ def main():
 
 		elif (sys.argv[1]).lower() == "program":
 			aquatone = False
+			screenshots = 0
 			program = sys.argv[2].rstrip('\n')
 
 			file = open(programs, "r")
