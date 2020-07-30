@@ -459,9 +459,9 @@ def main():
 					raise e
 				else:
 					for line in exlist[1:]:
-					if line.rstrip('\n') == program.rstrip('\n')
-					print(tbad,'**** Program %s is in exclude list, skipping',tend)
-					exclude = True
+						if line.rstrip('\n') == program.rstrip('\n')
+						print(tbad,'**** Program %s is in exclude list, skipping',tend)
+						exclude = True
 				if exclude:
 					continue
 				screenshots = 0
