@@ -438,6 +438,9 @@ def main():
 			for program in p:
 				program = program.rstrip('\n')
 				print("\n\n*** Program = " + program)
+				if sum(1 for line in open('./programs/'+program+'/domains.txt')) < 1:
+					print(tbad, '*** Program %s does not have any domains.  Add them to domains.txt or use:\n\n    ./autofd.py add-domain <program> <domain>'%(program),tend)
+					continue
 				subEnumerate(program,linux)
 				new_domains = subTrack(program)
 				print("--- send_blank_emails: "+send_blank_emails)
@@ -469,6 +472,9 @@ def main():
 				exit()
 
 			print("\n\n *** Program = " + program)
+			if sum(1 for line in open('./programs/'+program+'/domains.txt')) < 1:
+					print(tbad, '*** Program %s does not have any domains.  Add them to domains.txt or use:\n\n    ./autofd.py add-domain <program> <domain>'%(program),tend)
+					exit()
 			subEnumerate(program,linux)
 			new_domains = subTrack(program)
 			print("--- send_blank_emails: "+send_blank_emails)
@@ -598,17 +604,23 @@ def main():
 		exit()
 
 	if sys.argv[1] == "list":
+		pcount = 0
+		dcount = 0
 		if os.path.isfile(programs) == False:
 			print("No programs to list.  add with add")
 			exit()
 		print(tnormal,"Current programs that will be enumerated:",tend)
 		p = open(programs)
 		for program in p:
+			pcount += 1
 			program = program.rstrip('\n')
 			print("\n"+program)
 			f = open("./programs/"+program+"/domains.txt")
 			for domain in f:
+				dcount += 1
 				print("    "+domain.rstrip('\n'))
+		print(tgood,'\n ---- Total programs: %s'%(str(pcount)),tend)
+		print(tgood,'---- Total domains across all programs: %s'%(str(dcount)),tend)
 		exit()
 
 	#if sys.argv[1] == "dns":

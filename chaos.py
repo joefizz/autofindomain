@@ -31,18 +31,19 @@ pr.close()
 for (k,v) in data.items():
 	for program in v:
 		found = False
-		print(program['name'])
+		program_name = program['name'].replace(" ","_").lower()
+		print(tgood,'\n---- Program: '+program_name,tend)
 		for line in plist:
 			line = line.rstrip('\n')
-			if line == program['name']:
+			if line == program_name:
 				print(tnormal,'--- Program %s already in autofd'%(line),tend)
 				found = True
 				print('found: '+str(found))
 		if not found:
-			print(tgood,'--- Adding %s to autofd'%(program['name']),tend)
+			print(tgood,'--- Adding %s to autofd'%(program_name),tend)
 			try:
 				FNULL = open(os.devnull, 'w')
-				proc = subprocess.call(['./autofd.py', 'add', program['name']],stdout=FNULL, stderr=subprocess.STDOUT)
+				proc = subprocess.call(['./autofd.py', 'add', program_name],stdout=FNULL, stderr=subprocess.STDOUT)
 			except OSError as e:
 				print (e.output)
 			found = False
@@ -51,7 +52,7 @@ for (k,v) in data.items():
 
 		valid_domains=0
 		domains_to_add=[]
-		print('\nProgram: '+program['name'])
+
 		domains = program['domains']
 		for domain in domains:
 			print('Domain: '+domain)
@@ -60,14 +61,14 @@ for (k,v) in data.items():
 			try:
 				ip = socket.gethostbyname(testdomain)
 			except Exception as e:
-				print(tgood,'No wildcard response for %s, will be added to autofd'%(testdomain),tend)
+				print(tgood,'No IP resolution for %s, %s will be added to autofd'%(testdomain, domain),tend)
 				domains_to_add.append(domain)
 				valid_domains += 1
 
 			else:
-				print(tbad,'Received wildcard response for %s pointing to %s. %s will not be added to autofd'%(testdomain,ip,domain),tend)
+				print(tbad,'Received IP resolution for %s pointing to %s. %s will not be added to autofd'%(testdomain,ip,domain),tend)
 		if valid_domains > 0:
-			dr = open('./programs/'+program['name']+'/domains.txt')
+			dr = open('./programs/'+program_name+'/domains.txt')
 			dlist = dr.readlines()
 			dr.close()
 
@@ -76,13 +77,13 @@ for (k,v) in data.items():
 				for line in dlist:
 					line = line.rstrip('\n')
 					if line == domain:
-						print(tnormal,'--- Domain %s already in program %s'%(domain,program['name']),tend)
+						print(tnormal,'--- Domain %s already in program %s'%(domain,program_name),tend)
 						found = True
 				if not found:
-					print(tgood,'--- Adding %s to program %s'%(domain,program['name']),tend)
+					print(tgood,'--- Adding %s to program %s'%(domain,program_name),tend)
 					try:
 						FNULL = open(os.devnull, 'w')
-						proc = subprocess.call(['./autofd.py', 'add-domain', program['name'], domain],stdout=FNULL, stderr=subprocess.STDOUT)
+						proc = subprocess.call(['./autofd.py', 'add-domain', program_name, domain],stdout=FNULL, stderr=subprocess.STDOUT)
 					except OSError as e:
 						print (e.output)
 					found = False
