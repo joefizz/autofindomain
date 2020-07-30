@@ -454,7 +454,7 @@ def main():
 				try:
 					ex = open('./exclude.txt','r')
 					exlist = ex.readlines()
-				ex.close()
+					ex.close()
 				except Exception as e:
 					raise e
 				else:
