@@ -451,11 +451,14 @@ def main():
 			aquatone = False
 			for program in p:
 				exclude = False
-				try
-				ex = open('./exclude.txt','r')
-				exlist = ex.readlines()
+				try:
+					ex = open('./exclude.txt','r')
+						exlist = ex.readlines()
 				ex.close()
-				for line in exlist[1:]:
+				except Exception as e:
+					raise e
+				else:
+					for line in exlist[1:]:
 					if line.rstrip('\n') == program.rstrip('\n')
 					print(tbad,'**** Program %s is in exclude list, skipping',tend)
 					exclude = True
