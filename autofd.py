@@ -453,7 +453,7 @@ def main():
 				exclude = False
 				try:
 					ex = open('./exclude.txt','r')
-						exlist = ex.readlines()
+					exlist = ex.readlines()
 				ex.close()
 				except Exception as e:
 					raise e
