@@ -372,8 +372,9 @@ def toSlack(program):
 			for key in v:
 				url = v[key]['url']
 				screenshotPath = v[key]['screenshotPath']
+				IP = v[key]['addrs']
 				proxies = {"http": "http://127.0.0.1:8080", "https": "http://127.0.0.1:8080"}
-				data = {'initial_comment':'New subdomain discovered for '+program+': '+url,'channels':slack_channel}
+				data = {'initial_comment':'New subdomain discovered for '+program+': '+url+' - pointing to '+IP,'channels':slack_channel}
 				headers = {'Authorization':'Bearer '+slack_oauth_token}
 				r =requests.post(slack_api+'files.upload', data, headers=headers, files={"file": (aquatone_web_path+'/'+program+'/'+screenshotPath, open(aquatone_web_path+'/'+program+'/'+screenshotPath, "rb"), "image/png")})
 
@@ -423,6 +424,7 @@ def main():
 		exit()
 
 	if (sys.argv[1]).lower() == "enum" or (sys.argv[1]).lower() == "program":
+		screenshots = 0
 		if platform.system() == "Linux":
 			if os.geteuid() != 0:
 				print(talert,"*** autoFD on Linux requires running as sudo.  \nThis is to improve nmap scan speed, but more importantly to ensure permissions for various things work.",tend)
