@@ -5,3 +5,4 @@ config.ini
 out.old.txt
 out.txt
 programs/*
+exclude.txt

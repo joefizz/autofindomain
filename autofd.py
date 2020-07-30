@@ -113,6 +113,8 @@ def subEnumerate(program, linux):
 		t.daemon=True
 		if animation_on == 'true':
 			t.start()
+		else:
+			print(tnormal,'--- Searching subdomains of %s'%(domain),tend)
 		if linux == "true":
 			os.system("./findomain-linux -q -t "+domain+" -u out.txt > /dev/null")
 		if not linux == "true":
@@ -448,6 +450,17 @@ def main():
 		if (sys.argv[1]).lower() == "enum":
 			aquatone = False
 			for program in p:
+				exclude = False
+				try
+				ex = open('./exclude.txt','r')
+				exlist = ex.readlines()
+				ex.close()
+				for line in exlist[1:]:
+					if line.rstrip('\n') == program.rstrip('\n')
+					print(tbad,'**** Program %s is in exclude list, skipping',tend)
+					exclude = True
+				if exclude:
+					continue
 				screenshots = 0
 				program = program.rstrip('\n')
 				print("\n\n*** Program = " + program)
