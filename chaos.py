@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import requests, socket, random, string
+import requests, socket, random, string, os, subprocess
 
 twhite = '\033[40m'
 tgood = '\033[32m'
@@ -24,8 +24,31 @@ data = r.json()
 programs_to_add_count = 0
 domains_to_add_count = 0
 
+pr = open ('./programs.txt', 'r')
+plist = pr.readlines()
+pr.close()
+
 for (k,v) in data.items():
 	for program in v:
+		found = False
+		print(program['name'])
+		for line in plist:
+			line = line.rstrip('\n')
+			if line == program['name']:
+				print(tnormal,'--- Program %s already in autofd'%(line),tend)
+				found = True
+				print('found: '+str(found))
+		if not found:
+			print(tgood,'--- Adding %s to autofd'%(program['name']),tend)
+			try:
+				FNULL = open(os.devnull, 'w')
+				proc = subprocess.call(['./autofd.py', 'add', program['name']],stdout=FNULL, stderr=subprocess.STDOUT)
+			except OSError as e:
+				print (e.output)
+			found = False
+
+
+
 		valid_domains=0
 		domains_to_add=[]
 		print('\nProgram: '+program['name'])
@@ -44,9 +67,27 @@ for (k,v) in data.items():
 			else:
 				print(tbad,'Received wildcard response for %s pointing to %s. %s will not be added to autofd'%(testdomain,ip,domain),tend)
 		if valid_domains > 0:
-			print(tnormal,'Adding these domains to autofd:',tend)
+			dr = open('./programs/'+program['name']+'/domains.txt')
+			dlist = dr.readlines()
+			dr.close()
+
 			for domain in domains_to_add:
-				print(tgood,domain,tend)
+
+				for line in dlist:
+					line = line.rstrip('\n')
+					if line == domain:
+						print(tnormal,'--- Domain %s already in program %s'%(domain,program['name']),tend)
+						found = True
+				if not found:
+					print(tgood,'--- Adding %s to program %s'%(domain,program['name']),tend)
+					try:
+						FNULL = open(os.devnull, 'w')
+						proc = subprocess.call(['./autofd.py', 'add-domain', program['name'], domain],stdout=FNULL, stderr=subprocess.STDOUT)
+					except OSError as e:
+						print (e.output)
+					found = False
+
+
 			programs_to_add_count += 1
 		else:
 			print(tbad,'Will not add this program to autofd',tend)

@@ -529,6 +529,46 @@ def main():
 			lines = filter(lambda x: x.strip(), lines)
 			filehandle.writelines(lines)
 
+	if (sys.argv[1]) == "add-domain":
+		if len(sys.argv) < 4:
+			print(tnormal,'./autofd.py add-domain <program> <domain> <domain> <domain> ...')
+			exit()
+		program = sys.argv[2].rstrip('\n')
+		domain = sys.argv[3].rstrip('\n')
+		p = open(programs)
+		for prog in p:
+			prog = prog.rstrip('\n')
+			if prog == program:
+
+				dw = open('./programs/'+program+'/domains.txt', 'a')
+				dr = open('./programs/'+program+'/domains.txt', 'r')
+				drlist = dr.readlines()
+				print('drlist: '+str(drlist))
+				dr.close
+				for i in sys.argv[3:]:
+					found = False
+					print(i)
+					for line in drlist:
+						line = line.rstrip('\n')
+						if line == i:
+							print(tnormal,'--- Domain %s already in program'%(i),tend)
+							found = True
+					print('found: '+str(found))
+					if not found:
+						print(tgood,'--- Adding %s to domains.txt for program %s'%(i,program),tend)
+						dw.write(i+'\n')
+						found = False
+				dw.close()
+				with open('./programs/'+program+'/domains.txt') as temp_file:
+  					drugs = [line.rstrip('\n') for line in temp_file]
+				d = open('./programs/'+program+'/domains.txt')
+				for line in d:
+					line = line.rstrip('\n')
+					print(line)
+				d.close()
+				exit()
+		print(tbad,'Program [%s] does not exist. use \'./autofd list\' to show existing programs'%(program),tend)
+
 	if sys.argv[1] == "del":
 		if os.path.isfile(programs) == False:
 			print("No programs to delete")
