@@ -386,6 +386,7 @@ def toSlack(program):
 					r =requests.post(slack_api+'files.upload', data, headers=headers, files={"file": (aquatone_web_path+'/'+program+'/'+screenshotPath, open(aquatone_web_path+'/'+program+'/'+screenshotPath, "rb"), "image/png")})
 				except Exception as e:
 					raise e
+					continue
 
 def main():
 
@@ -459,6 +460,7 @@ def main():
 					ex.close()
 				except Exception as e:
 					raise e
+					continue
 				else:
 					for line in exlist:
 						if line.rstrip('\n') == program.rstrip('\n'):
