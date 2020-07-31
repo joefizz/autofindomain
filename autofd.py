@@ -363,7 +363,7 @@ def subReport(program):
 		try:
 			server.sendmail(sender_email, receiver_email.split(','), msg.as_string())
 		except Exception as e:
-			print e
+			print(e)
 		
 
 def toSlack(program):
