@@ -57,6 +57,7 @@ nmap_new = parser['nmap']['run_on_new_programs'].lower()
 # Aquatone Settings
 aquatone_on = parser['aquatone']['aquatone_on'].lower()
 aquatone_web_path = parser['aquatone']['aquatone_web_path']
+aquatone_url = parser['aquatone']['aquatone_url']
 aquatone_new = parser['aquatone']['run_on_new_programs'].lower()
 aquatone_nmap = parser['aquatone']['aquatone_nmap'].lower()
 aquatone_http_timeout = parser['aquatone']['aquatone_http_timeout']
@@ -392,7 +393,10 @@ def toSlack(program):
 				screenshotPath = v[key]['screenshotPath']
 				IP = v[key]['addrs']
 				proxies = {"http": "http://127.0.0.1:8080", "https": "http://127.0.0.1:8080"}
-				data = {'initial_comment':'New subdomain discovered for '+program+': '+url+' - pointing to '+str(IP),'channels':slack_channel}
+				try:
+					data = {'initial_comment':'New subdomain discovered for '+program+': '+url+'\n - pointing to '+str(IP)+'\n - full results: '+aquatone_url+'/'+program+'/aquatone_report.html','channels':slack_channel}
+				except Exception as e:
+					print(e)
 				headers = {'Authorization':'Bearer '+slack_oauth_token}
 				if screenshotPath == "":
 					try:

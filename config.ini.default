@@ -41,6 +41,9 @@ aquatone_on = true
 # The path to the web directory where you would like the HTML files from aquatone to go to
 aquatone_web_path = /var/www/html/
 
+# Path to where aquatone HTML results are hosted
+aquatone_url = http://my.aquatone.example.com/
+
 # Do you want to run nmap on new programs?  This can take a loooooooooong time if it is a large program as it will scan all discovered subdomains.
 run_on_new_programs = false
 
