@@ -465,8 +465,7 @@ def main():
 					exlist = ex.readlines()
 					ex.close()
 				except Exception as e:
-					raise e
-					continue
+					print e
 				else:
 					for line in exlist:
 						if line.rstrip('\n') == program.rstrip('\n'):
