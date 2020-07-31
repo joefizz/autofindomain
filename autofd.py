@@ -382,11 +382,11 @@ def toSlack(program):
 				proxies = {"http": "http://127.0.0.1:8080", "https": "http://127.0.0.1:8080"}
 				data = {'initial_comment':'New subdomain discovered for '+program+': '+url+' - pointing to '+str(IP),'channels':slack_channel}
 				headers = {'Authorization':'Bearer '+slack_oauth_token}
-				try:
-					r =requests.post(slack_api+'files.upload', data, headers=headers, files={"file": (aquatone_web_path+'/'+program+'/'+screenshotPath, open(aquatone_web_path+'/'+program+'/'+screenshotPath, "rb"), "image/png")})
-				except Exception as e:
-					raise e
-					continue
+				if screenshotPath == "":
+					r = requests.post(slack_api+'chat.postMessage', {'message':'New subdomain without screenshot discovered for '+program+': '+url+' - pointing to '+str(IP),'channels':slack_channel}, headers=headers,)
+				else:	
+					r = requests.post(slack_api+'files.upload', data, headers=headers, files={"file": (aquatone_web_path+'/'+program+'/'+screenshotPath, open(aquatone_web_path+'/'+program+'/'+screenshotPath, "rb"), "image/png")})
+
 
 def main():
 
