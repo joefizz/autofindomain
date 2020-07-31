@@ -276,7 +276,7 @@ def subAquatone(program):
 	if aquatone_nmap == 'true':
 		try:
 			cat = subprocess.Popen(('cat', './programs/'+program+'/nmap_merged_'+timestamp+'.xml'), stdout=subprocess.PIPE)
-			aqua = subprocess.call(('aquatone', '-nmap', '-out', './programs/'+program, '-http-timeout', aquatone_http_timeout), stdin=cat.stdout)
+			aqua = subprocess.call(('aquatone', '-ports', 'xlarge', '-nmap', '-out', './programs/'+program, '-http-timeout', aquatone_http_timeout), stdin=cat.stdout)
 		except OSError as e:
 			print (e.output)
 	else:
@@ -462,7 +462,7 @@ def main():
 				else:
 					for line in exlist:
 						if line.rstrip('\n') == program.rstrip('\n'):
-							print(tbad,'**** Program %s is in exclude list, skipping'%(program),tend)
+							print(tbad,'**** Program %s is in exclude list, skipping'%(program.rstrip('\n')),tend)
 							exclude = True
 				if exclude:
 					continue
