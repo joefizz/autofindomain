@@ -31,7 +31,7 @@ pr.close()
 for (k,v) in data.items():
 	for program in v:
 		found = False
-		program_name = program['name'].replace(" ","_").replace("(","").replace(")","").lower()
+		program_name = program['name'].replace(" ","_").replace("(","").replace(")","").replace("&","and").lower()
 		print(tgood,'\n---- Program: '+program_name,tend)
 		for line in plist:
 			line = line.rstrip('\n')
