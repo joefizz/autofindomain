@@ -363,7 +363,7 @@ def subReport(program):
 		try:
 			server.sendmail(sender_email, receiver_email.split(','), msg.as_string())
 		except Exception as e:
-			raise e
+			print e
 		
 
 def toSlack(program):
@@ -383,9 +383,15 @@ def toSlack(program):
 				data = {'initial_comment':'New subdomain discovered for '+program+': '+url+' - pointing to '+str(IP),'channels':slack_channel}
 				headers = {'Authorization':'Bearer '+slack_oauth_token}
 				if screenshotPath == "":
-					r = requests.post(slack_api+'chat.postMessage', {'message':'New subdomain without screenshot discovered for '+program+': '+url+' - pointing to '+str(IP),'channels':slack_channel}, headers=headers,)
+					try:
+						r = requests.post(slack_api+'chat.postMessage', {'message':'New subdomain without screenshot discovered for '+program+': '+url+' - pointing to '+str(IP),'channels':slack_channel}, headers=headers,)
+					except Exception as e:
+						print(tbad,e,tend)
 				else:	
-					r = requests.post(slack_api+'files.upload', data, headers=headers, files={"file": (aquatone_web_path+'/'+program+'/'+screenshotPath, open(aquatone_web_path+'/'+program+'/'+screenshotPath, "rb"), "image/png")})
+					try:
+						r = requests.post(slack_api+'files.upload', data, headers=headers, files={"file": (aquatone_web_path+'/'+program+'/'+screenshotPath, open(aquatone_web_path+'/'+program+'/'+screenshotPath, "rb"), "image/png")})
+					except Exception as e:
+						print(tbad,e,tend)
 
 
 def main():
@@ -537,7 +543,6 @@ def main():
 		p = open(programs)
 		for line in p:
 			line = line.rstrip('\n')
-			print("line %s, program %s"%(line,program))
 			if line == program:
 				print("Program " + program +" exists")
 				toSlack(program)
