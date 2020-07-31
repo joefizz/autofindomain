@@ -312,10 +312,22 @@ def subAquatone(program):
 		os.makedirs(aquatone_web_path+'/'+program)
 	except:
 		print(tnormal,aquatone_web_path+'/'+program+' already exists, no need to create',tend)
-	shutil.move('./programs/'+program+'/aquatone_report.html', aquatone_web_path+'/'+program+'/aquatone_report.html')
-	shutil.move('./programs/'+program+'/screenshots', aquatone_web_path+'/'+program+'/')
-	shutil.move('./programs/'+program+'/html', aquatone_web_path+'/'+program+'/')
-	shutil.move('./programs/'+program+'/headers', aquatone_web_path+'/'+program+'/')
+	try:
+		shutil.move('./programs/'+program+'/aquatone_report.html', aquatone_web_path+'/'+program+'/aquatone_report.html')
+	except Exception as e:
+		print(e)
+	try:
+		shutil.move('./programs/'+program+'/screenshots', aquatone_web_path+'/'+program+'/')
+	except Exception as e:
+		print(e)	
+	try:
+		shutil.move('./programs/'+program+'/html', aquatone_web_path+'/'+program+'/')
+	except Exception as e:
+		print(e)
+	try:
+		shutil.move('./programs/'+program+'/headers', aquatone_web_path+'/'+program+'/')
+	except Exception as e:
+		print(e)
 
 	print(tgood,"Latest aquatone results available in "+aquatone_web_path,tend)
 
