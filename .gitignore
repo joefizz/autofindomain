@@ -6,3 +6,4 @@ out.old.txt
 out.txt
 programs/*
 exclude.txt
+excludedomains.txt

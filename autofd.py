@@ -97,6 +97,19 @@ def subEnumerate(program, linux):
 	f = open("programs/" + program + "/domains.txt")
 	for domain in f:
 		domain = domain.rstrip('\n')
+
+		#p = open('./domainsexclude.txt')
+		#plist = p.readlines()
+		#p.close()
+		#exclude = False
+		#for subd in plist:
+	#		if subd.rstrip('\n') == domain:
+#				exclude = True
+		#if exclude:
+		#	continue
+
+
+
 		path="programs/"+program+"/"+domain
 
 
@@ -120,9 +133,9 @@ def subEnumerate(program, linux):
 			os.system("./findomain-linux -q -t "+domain+" -u out.txt > /dev/null")
 		if not linux == "true":
 			os.system("findomain -q -t "+domain+" -u out.txt > /dev/null")
-		os.system("sort -u out.txt > "+path+"_latest.txt")
+		os.system("sort -u out.txt > "+path+"_latest-"+timestamp+".txt")
 		done = True
-		print(tgood,"--- Latest subdomain results available in "+path+"_latest.txt",tend)
+		print(tgood,"--- Latest subdomain results available in "+path+"_latest-"+timestamp+".txt",tend)
 
 def subTrack(program):
 	global new_program
@@ -135,23 +148,26 @@ def subTrack(program):
 		print(tnormal,"\n--- Comparing new discoveries to existing discoveries",tend)
 		if os.path.isfile(path+"_all.txt") == False:
 			print("First enum for this domain, no results to compare")
-			os.system("cp "+path+"_latest.txt "+path+"_all.txt")
+			os.system("cp "+path+"_latest-"+timestamp+".txt "+path+"_all.txt")
 			print("Subdomains saved to "+path+"_all.txt")
-			os.system("cp "+path+"_latest.txt "+path+"_new.txt")
-			new_domain_total = sum(1 for line in open(path+"_new.txt"))
+			os.system("cp "+path+"_latest-"+timestamp+".txt "+path+"_new-"+timestamp+".txt")
+			new_domain_total = sum(1 for line in open(path+"_new-"+timestamp+".txt"))
 			new_program = 1
 		else:
-			os.system("comm -23 "+path+"_latest.txt "+path+"_all.txt > "+path+"_new.txt")
-			new_domain_count = sum(1 for line in open(path+"_new.txt"))
-			print(tgood,"--- "+str(new_domain_count)+" new subdomains for "+domain+" saved to "+path+"_new.txt",tend)
+			os.system("comm -23 "+path+"_latest-"+timestamp+".txt "+path+"_all.txt > "+path+"_new-"+timestamp+".txt")
+			new_domain_count = sum(1 for line in open(path+"_new-"+timestamp+".txt"))
+			print(tgood,"--- "+str(new_domain_count)+" new subdomains for "+domain+" saved to "+path+"_new-"+timestamp+".txt",tend)
 			new_domain_total += new_domain_count
 			os.system("cp "+path+"_all.txt "+path+"_temp.txt")
-			os.system("cat "+path+"_new.txt >> "+path+"_temp.txt")
+			os.system("cat "+path+"_new-"+timestamp+".txt >> "+path+"_temp.txt")
 			os.system("sort -u "+path+"_temp.txt > "+path+"_all.txt")
 		print(tgood,"Newly discovered subdomains added to all",tend)
 	os.system("echo 'New subdomains for "+program+":' > programs/"+program+"/report.txt")
 	os.system("cat programs/"+program+"/*_new.txt >> programs/"+program+"/report.txt")
 	return new_domain_total
+
+def subWildcard(program):
+	p = open()
 
 def subNmap(program):
 	print(tnormal,"--- Removing historic nmap files from "+program+" folder.",tend)
@@ -168,7 +184,11 @@ def subNmap(program):
 		newSubdomains = []
 		domain = domain.rstrip('\n')
 		path="programs/"+program+"/"+domain
-		s = open(path+"_new.txt")
+		try:
+			s = open(path+"_new-"+timestamp+".txt")
+		except Exception as e:
+			print(e)
+			continue
 		for subdomain in s:
 			subdomain=subdomain.rstrip('\n')
 			newSubdomains.append(subdomain)
