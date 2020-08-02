@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import os, sys, smtplib, ssl, configparser, shutil, itertools, threading, time, platform, subprocess, re, stat, json, requests
+import random, os, sys, smtplib, ssl, string,configparser, shutil, itertools, threading, time, platform, subprocess, re, stat, json, requests, socket
 import xml.etree.ElementTree as ET
 from datetime import datetime
 from email.mime.text import MIMEText 
@@ -163,7 +163,7 @@ def subTrack(program):
 			os.system("sort -u "+path+"_temp.txt > "+path+"_all.txt")
 		print(tgood,"Newly discovered subdomains added to all",tend)
 	os.system("echo 'New subdomains for "+program+":' > programs/"+program+"/report.txt")
-	os.system("cat programs/"+program+"/*_new.txt >> programs/"+program+"/report.txt")
+	os.system("cat programs/"+program+"/*_new-"+timestamp+".txt >> programs/"+program+"/report.txt")
 	return new_domain_total
 
 def subWildcard(program):
@@ -191,7 +191,8 @@ def subNmap(program):
 			continue
 		for subdomain in s:
 			subdomain=subdomain.rstrip('\n')
-			newSubdomains.append(subdomain)
+			if testSubdomain(subdomain):
+				newSubdomains.append(subdomain)
 
 		for subdomain in newSubdomains:
 			nmap_args = nmap_arguments.copy()
@@ -297,13 +298,13 @@ def subAquatone(program):
 	if aquatone_nmap == 'true':
 		try:
 			cat = subprocess.Popen(('cat', './programs/'+program+'/nmap_merged_'+timestamp+'.xml'), stdout=subprocess.PIPE)
-			aqua = subprocess.call(('aquatone', '-ports', 'xlarge', '-nmap', '-out', './programs/'+program, '-http-timeout', aquatone_http_timeout), stdin=cat.stdout)
+			aqua = subprocess.call(('aquatone', '-nmap', '-out', './programs/'+program, '-http-timeout', aquatone_http_timeout), stdin=cat.stdout)
 		except OSError as e:
 			print (e.output)
 	else:
 		try:
 			cat = subprocess.Popen(('cat', './programs/'+program+'/nmap_merged_'+timestamp+'.xml'), stdout=subprocess.PIPE)
-			aqua = subprocess.call(('aquatone', '-ports', 'xlarge', '-out', './programs/'+program, '-http-timeout', aquatone_http_timeout), stdin=cat.stdout)
+			aqua = subprocess.call(('aquatone', '-out', './programs/'+program, '-http-timeout', aquatone_http_timeout), stdin=cat.stdout)
 		except OSError as e:
 			print (e.output)
 
@@ -429,6 +430,25 @@ def toSlack(program):
 					except Exception as e:
 						print(tbad,e,tend)
 
+def testSubdomain(subdomain):
+	if subdomain.count('.') == 1:
+		print('This appears to be a root domain - %s'%(subdomain))
+		return True
+	testdomain = get_random_string(12)+'.'+ subdomain.split('.',1)[1]
+	try:
+		ip = socket.gethostbyname(testdomain)
+	except Exception as e:
+		print(tgood,'No IP resolution for %s, valid domain.'%(testdomain),tend)
+		return True
+	else:
+		print(tbad,'Received IP resolution for %s pointing to %s. %s likely wildcard response'%(testdomain,ip,subdomain),tend)
+		return False
+
+def get_random_string(length):
+    letters = string.ascii_lowercase
+    result_str = ''.join(random.choice(letters) for i in range(length))
+    #print("Random string of length", length, "is:", result_str)
+    return result_str
 
 def main():
 
