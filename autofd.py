@@ -135,7 +135,7 @@ def subEnumerate(program, linux):
 			os.system("findomain -q -t "+domain+" -u out.txt > /dev/null")
 		os.system("sort -u out.txt > "+path+"_latest-"+timestamp+".txt")
 		done = True
-		print(tgood,"--- Latest subdomain results available in "+path+"_latest-"+timestamp+".txt",tend)
+		print(tgood,"--- Latest subdomain results available in "+path+"_latest.txt",tend)
 
 def subTrack(program):
 	global new_program
@@ -162,6 +162,10 @@ def subTrack(program):
 			os.system("cat "+path+"_new-"+timestamp+".txt >> "+path+"_temp.txt")
 			os.system("sort -u "+path+"_temp.txt > "+path+"_all.txt")
 		print(tgood,"Newly discovered subdomains added to all",tend)
+		try:
+			shutil.move(path+"_latest-"+timestamp+".txt", path+"_latest.txt")
+		except Exception as e:
+			print(e)
 	os.system("echo 'New subdomains for "+program+":' > programs/"+program+"/report.txt")
 	os.system("cat programs/"+program+"/*_new-"+timestamp+".txt >> programs/"+program+"/report.txt")
 	return new_domain_total
