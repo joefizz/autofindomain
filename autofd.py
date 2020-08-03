@@ -241,8 +241,6 @@ def subNmap(program):
 			xmlFiles.append(os.path.join(dir, f))
 	if xmlFiles:
 		xmlMerge(xmlFiles, program)
-	else:
-		port_count = 0
 
 	return port_count
 
@@ -253,7 +251,7 @@ def xmlMerge(xmlFiles, program):
 	# Check to ensure we have work to do
 	if not xmlFiles:
 		print("No XML files were found ... No work to do")
-		exit()
+		return
 
 	# Create the Merged filename
 	path="programs/"+program
@@ -542,8 +540,7 @@ def main():
 					continue
 				subEnumerate(program,linux)
 				new_domains = subTrack(program)
-				print("--- send_blank_emails: "+send_blank_emails)
-				print("--- new_domains: "+str(new_domains))
+				print("--- New subdomains: "+str(new_domains))
 				port_count = 0
 				if nmap_on == 'true' and new_domains > 0:
 					if new_program == 0 or nmap_new == 'true':
