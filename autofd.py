@@ -134,6 +134,7 @@ def subEnumerate(program, linux):
 		if not linux == "true":
 			os.system("findomain -q -t "+domain+" -u out.txt > /dev/null")
 		os.system("sort -u out.txt > "+path+"_latest-"+timestamp+".txt")
+		os.system("rm out.txt")
 		done = True
 		print(tgood,"--- Latest subdomain results available in "+path+"_latest.txt",tend)
 
@@ -238,8 +239,10 @@ def subNmap(program):
 	for f in os.listdir(dir):
 		if f.lower().endswith('_nmap_'+timestamp+'.xml'):
 			xmlFiles.append(os.path.join(dir, f))
-
-	xmlMerge(xmlFiles, program)
+	if xmlFiles:
+		xmlMerge(xmlFiles, program)
+	else:
+		port_count = 0
 
 	return port_count
 
@@ -402,7 +405,6 @@ def subReport(program):
 		except Exception as e:
 			print(e)
 		
-
 def toSlack(program):
 	print (tgood,"Sending latest data for %s to slack"%(program),tend)
 	slack_api = 'https://slack.com/api/'
@@ -441,7 +443,7 @@ def testSubdomain(subdomain):
 	try:
 		ip = socket.gethostbyname(testdomain)
 	except Exception as e:
-		print(tgood,'No IP resolution for %s, %s like valid domain.'%(testdomain, subdomain),tend)
+		print(tgood,'No IP resolution for %s, %s likely valid domain.'%(testdomain, subdomain),tend)
 		return True
 	else:
 		print(tbad,'Received IP resolution for %s pointing to %s. %s likely wildcard response'%(testdomain,ip,subdomain),tend)
