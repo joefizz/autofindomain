@@ -435,7 +435,7 @@ def toSlack(program):
 						print(tbad,e,tend)
 
 def testSubdomain(subdomain):
-	if subdomain.count('.') == 1:
+	if subdomain.count('.') == 2:
 		print('This appears to be a root domain - %s'%(subdomain))
 		return True
 	testdomain = get_random_string(12)+'.'+ subdomain.split('.',1)[1]
