@@ -171,8 +171,6 @@ def subTrack(program):
 	os.system("cat programs/"+program+"/*_new-"+timestamp+".txt >> programs/"+program+"/report.txt")
 	return new_domain_total
 
-def subWildcard(program):
-	p = open()
 
 def subNmap(program):
 	print(tnormal,"--- Removing historic nmap files from "+program+" folder.",tend)
@@ -437,13 +435,13 @@ def toSlack(program):
 
 def testSubdomain(subdomain):
 	if subdomain.count('.') == 2:
-		print('This appears to be a root domain - %s'%(subdomain))
+		print('This appears to be attached to the root domain and therefore likely not a wildcard response - %s'%(subdomain))
 		return True
 	testdomain = get_random_string(12)+'.'+ subdomain.split('.',1)[1]
 	try:
 		ip = socket.gethostbyname(testdomain)
 	except Exception as e:
-		print(tgood,'No IP resolution for %s, valid domain.'%(testdomain),tend)
+		print(tgood,'No IP resolution for %s, %s like valid domain.'%(testdomain, subdomain),tend)
 		return True
 	else:
 		print(tbad,'Received IP resolution for %s pointing to %s. %s likely wildcard response'%(testdomain,ip,subdomain),tend)
