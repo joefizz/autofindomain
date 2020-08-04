@@ -578,7 +578,9 @@ def main():
 					subReport(program)
 				if send_results_to_slack == 'true' and new_domains > 0 and new_program == 0 and screenshots > 0:
 					toSlack(program)
+				folder_clean(program)
 				new_program = 0
+
 
 		elif (sys.argv[1]).lower() == "program":
 			aquatone = False
@@ -616,6 +618,7 @@ def main():
 				subReport(program)
 			if send_results_to_slack == 'true' and new_domains > 0 and new_program == 0 and screenshots > 0:
 				toSlack(program)
+			folder_clean(program)
 
 		exit()
 
