@@ -472,6 +472,12 @@ def get_random_string(length):
     #print("Random string of length", length, "is:", result_str)
     return result_str
 
+def folder_clean(program):
+	try:
+		shutil.rmtree('./programs/'+program+'/*'+timestamp+'*')
+	except:
+		print(tnormal, e, tend)
+
 def main():
 
 	global new_program
