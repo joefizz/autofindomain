@@ -161,7 +161,8 @@ def subTrack(program):
 			os.system("comm -23 "+path+"_latest-"+timestamp+".txt "+path+"_all.txt > "+path+"_new-"+timestamp+".txt")
 			new_domain_count = sum(1 for line in open(path+"_new-"+timestamp+".txt"))
 			if new_domain_count > 0:
-				print(tgood,"--- "+str(new_domain_count)+" new subdomains for "+domain+" saved to "+path+"_new-"+timestamp+".txt",tend)
+				os.system("cp "+path+"_new-"+timestamp+".txt "+path+"_new.txt")
+				print(tgood,"--- "+str(new_domain_count)+" new subdomains for "+domain+" saved to "+path+"_new.txt",tend)
 			new_domain_total += new_domain_count
 			os.system("cp "+path+"_all.txt "+path+"_temp.txt")
 			os.system("cat "+path+"_new-"+timestamp+".txt >> "+path+"_temp.txt")
