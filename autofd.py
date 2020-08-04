@@ -423,9 +423,10 @@ def toSlack(program):
 				url = v[key]['url']
 				screenshotPath = v[key]['screenshotPath']
 				IP = v[key]['addrs']
+				status = v[key]['status']
 				proxies = {"http": "http://127.0.0.1:8080", "https": "http://127.0.0.1:8080"}
 				try:
-					data = {'initial_comment':'New subdomain discovered for '+program+': '+url+'\n - pointing to '+str(IP)+'\n - full results: '+aquatone_url+'/'+program+'/aquatone_report.html','channels':slack_channel}
+					data = {'initial_comment':'New subdomain discovered for '+program+': '+url+'\n - with status '+str(status)+'\n - pointing to '+str(IP)+'\n - full results: '+aquatone_url+'/'+program+'/aquatone_report.html','channels':slack_channel}
 				except Exception as e:
 					print(e)
 				headers = {'Authorization':'Bearer '+slack_oauth_token}
