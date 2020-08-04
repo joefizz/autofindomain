@@ -365,10 +365,13 @@ def subAquatone(program):
 	index_html += '<html>'
 	index_html += '<body>'
 	index_html += '<h2>Existing aquatone results for all programs:</h2>'
-	for f in os.listdir(aquatone_web_path):
-		if not "index.html" in f and not ".DS_Store" in f:
-			if not os.path.isdir(f):
-				index_html += '<h4><a href="'+f+'/aquatone_report.html">'+f+'</a></br></h4>'
+	paths = sorted(Path(aquatone_web_path).iterdir(), key=os.path.getmtime, reverse=True)
+
+	for p in paths:
+		pname = p.name
+		if not "index.html" in pname and not ".DS_Store" in pname:
+			if not os.path.isdir(pname):
+				index_html += '<h4><a href="'+pname+'/aquatone_report.html">'+pname+'</a></br></h4>'
 	index_html += '</body>'
 	index_html += '</html>'
 
