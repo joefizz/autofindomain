@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import random, os, sys, smtplib, ssl, string, configparser, shutil, itertools, threading, time, platform, subprocess, re, stat, json, requests, socket
+import random, os, sys, glob, smtplib, ssl, string, configparser, shutil, itertools, threading, time, platform, subprocess, re, stat, json, requests, socket
 import xml.etree.ElementTree as ET
 from datetime import datetime
 from email.mime.text import MIMEText 
@@ -474,9 +474,12 @@ def get_random_string(length):
 
 def folder_clean(program):
 	try:
-		shutil.rmtree('./programs/'+program+'/*'+timestamp+'*')
-	except:
-		print(tnormal, e, tend)
+		flist = glob.glob('./programs/'+program+'/*'+timestamp+'*')
+		for f in flist:
+			try:
+				os.remove(f)
+			except:
+				print(tbad, "Error while deleting file : ", f, tend)
 
 def main():
 
