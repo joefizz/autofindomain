@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import random, os, sys, smtplib, ssl, string,configparser, shutil, itertools, threading, time, platform, subprocess, re, stat, json, requests, socket
+import random, os, sys, smtplib, ssl, string, configparser, shutil, itertools, threading, time, platform, subprocess, re, stat, json, requests, socket
 import xml.etree.ElementTree as ET
 from datetime import datetime
 from email.mime.text import MIMEText 
@@ -133,8 +133,11 @@ def subEnumerate(program, linux):
 			os.system("./findomain-linux -q -t "+domain+" -u out.txt > /dev/null")
 		if not linux == "true":
 			os.system("findomain -q -t "+domain+" -u out.txt > /dev/null")
-		os.system("sort -u out.txt > "+path+"_latest-"+timestamp+".txt")
-		os.system("rm out.txt")
+		try:
+			os.system("sort -u out.txt > "+path+"_latest-"+timestamp+".txt")
+			os.system("rm out.txt")
+		except Exception as e:
+			print(e)
 		done = True
 		print(tgood,"--- Latest subdomain results available in "+path+"_latest.txt",tend)
 
@@ -163,15 +166,15 @@ def subTrack(program):
 			os.system("cp "+path+"_all.txt "+path+"_temp.txt")
 			os.system("cat "+path+"_new-"+timestamp+".txt >> "+path+"_temp.txt")
 			os.system("sort -u "+path+"_temp.txt > "+path+"_all.txt")
-		print(tgood,"Newly discovered subdomains added to all",tend)
+		print(tgood,"Newly discovered subdomains (if any) added to all",tend)
 		try:
 			shutil.move(path+"_latest-"+timestamp+".txt", path+"_latest.txt")
 		except Exception as e:
 			print(e)
+
 	os.system("echo 'New subdomains for "+program+":' > programs/"+program+"/report.txt")
 	os.system("cat programs/"+program+"/*_new-"+timestamp+".txt >> programs/"+program+"/report.txt")
 	return new_domain_total
-
 
 def subNmap(program):
 	print(tnormal,"--- Removing historic nmap files from "+program+" folder.",tend)
@@ -434,6 +437,15 @@ def toSlack(program):
 						print(tbad,e,tend)
 
 def testSubdomain(subdomain):
+
+	d = open('./excludedomains.txt', 'r')
+	dlist = d.readlines()
+	d.close()
+	for d in dlist:
+		d = d.strip('\n')
+		if d in subdomain:
+			print('%s contains %s which is in excludedomains.txt'%(subdomain,d))
+			return False
 	if subdomain.count('.') == 2:
 		print('This appears to be attached to the root domain and therefore likely not a wildcard response - %s'%(subdomain))
 		return True
@@ -446,6 +458,10 @@ def testSubdomain(subdomain):
 	else:
 		print(tbad,'Received IP resolution for %s pointing to %s. %s likely wildcard response'%(testdomain,ip,subdomain),tend)
 		return False
+	
+
+	
+	return result
 
 def get_random_string(length):
     letters = string.ascii_lowercase
@@ -549,7 +565,7 @@ def main():
 						if new_program == 0 or aquatone_new == 'true':
 							aquatone = True
 							screenshots = subAquatone(program)
-				if send_blank_emails == 'false' and new_domains > 0:
+				if send_blank_emails == 'true' or new_domains > 0:
 					subReport(program)
 				if send_results_to_slack == 'true' and new_domains > 0 and new_program == 0 and screenshots > 0:
 					toSlack(program)
@@ -587,7 +603,7 @@ def main():
 					if new_program == 0 or aquatone_new == 'true':
 						aquatone = True
 						screenshots = subAquatone(program)
-			if send_blank_emails == 'false' and new_domains > 0:
+			if send_blank_emails == 'true' or new_domains > 0:
 				subReport(program)
 			if send_results_to_slack == 'true' and new_domains > 0 and new_program == 0 and screenshots > 0:
 				toSlack(program)
