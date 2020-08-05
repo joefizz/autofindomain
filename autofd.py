@@ -92,23 +92,11 @@ print(tnormal,"Timestamp: "+timestamp,tend)
 new_program = 0
 
 def subEnumerate(program, linux):
-	print(tnormal, "--- Beginning findomain search of domains in " + program, tend)
+	print(tnormal, "--- Beginning subdomain search of domains in " + program, tend)
 	linux = linux
 	f = open("programs/" + program + "/domains.txt")
 	for domain in f:
 		domain = domain.rstrip('\n')
-
-		#p = open('./domainsexclude.txt')
-		#plist = p.readlines()
-		#p.close()
-		#exclude = False
-		#for subd in plist:
-	#		if subd.rstrip('\n') == domain:
-#				exclude = True
-		#if exclude:
-		#	continue
-
-
 
 		path="programs/"+program+"/"+domain
 
@@ -130,12 +118,29 @@ def subEnumerate(program, linux):
 		else:
 			print(tnormal,'--- Searching subdomains of %s'%(domain),tend)
 		if linux == "true":
-			os.system("./findomain-linux -q -t "+domain+" -u out.txt > /dev/null")
+			try:
+				os.system("./findomain-linux -q -t "+domain+" -u out.txt > /dev/null")
+			except Exception as e:
+				print(e)
+			try:
+				os.system('./subfinder_linux/subfinder -config ./subfinder_config.yaml -d '+domain+' -max-time 1 -nW -o subout.txt -silent > /dev/null')
+			except Exception as e:
+				print(e)
 		if not linux == "true":
-			os.system("findomain -q -t "+domain+" -u out.txt > /dev/null")
+			try:
+				os.system("findomain -q -t "+domain+" -u out.txt > /dev/null")
+			except Exception as e:
+				print(e)
+			try:
+				os.system('./subfinder_mac/subfinder -config ./subfinder_config.yaml -d '+domain+' -max-time 1 -nW -o subout.txt -silent > /dev/null')
+			except Exception as e:
+				print(e)
+
 		try:
+			os.system('cat ./subout.txt >> ./out.txt')
 			os.system("sort -u out.txt > "+path+"_latest-"+timestamp+".txt")
 			os.system("rm out.txt")
+			os.system("rm subout.txt")
 		except Exception as e:
 			print(e)
 		done = True
@@ -424,9 +429,14 @@ def toSlack(program):
 				screenshotPath = v[key]['screenshotPath']
 				IP = v[key]['addrs']
 				status = v[key]['status']
+				headerfile = v[key]['headersPath']
+				header = open(aquatone_web_path+'/'+program+'/'+headerfile)
+				htext = header.read()
+				header.close()
 				proxies = {"http": "http://127.0.0.1:8080", "https": "http://127.0.0.1:8080"}
+
 				try:
-					data = {'initial_comment':'New subdomain discovered for '+program+': '+url+'\n - with status '+str(status)+'\n - pointing to '+str(IP)+'\n - full results: '+aquatone_url+'/'+program+'/aquatone_report.html','channels':slack_channel}
+					data = {'initial_comment':'New subdomain discovered for '+program+': '+url+'\n - with status '+str(status)+'\n - pointing to '+str(IP)+'\n- full results: '+aquatone_url+'/'+program+'/aquatone_report.html\n'+'```'+htext+'```','channels':slack_channel}
 				except Exception as e:
 					print(e)
 				headers = {'Authorization':'Bearer '+slack_oauth_token}
