@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
-import random, os, sys, glob, smtplib, ssl, string, configparser, shutil, itertools, threading, time, platform, subprocess, re, stat, json, requests, socket
+import signal,  random, os, sys, glob, smtplib, ssl, string, configparser
+import shutil, itertools, threading, time, platform, subprocess, re, stat, json, requests, socket
 import xml.etree.ElementTree as ET
 from datetime import datetime
 from email.mime.text import MIMEText 
@@ -492,9 +493,38 @@ def folder_clean(program):
 		except:
 			print(tbad, "Error while deleting file : ", f, tend)
 
+def ctrlc(sig, frame):
+	c = input('Ctrl-c detected, would you like to (e)nd or (c)ontinue?').lower()
+	if c == 'e':
+		fin()
+	signal.signal(signal.SIGINT, original_sigint)
+
+	try:
+		if raw_input("\nCtrl-c detected, would you like to (e)nd or (c)ontinue?: ").lower().startswith('e'):
+			sys.exit(1)
+
+	except KeyboardInterrupt:
+		print("Ok ok, quitting")
+		fin(1)
+
+    # restore the exit gracefully handler here    
+	signal.signal(signal.SIGINT, ctrlc)
+
+def fin(status):
+	shutil.rmtree('/tmp/autofd.pid')
+
+	sys.exit(status)
+
 def main():
 
 	global new_program
+	original_sigint = signal.getsignal(signal.SIGINT)
+	signal.signal(signal.SIGINT, ctrlc)
+	if os.path.isfile('/tmp/autofd.pid'):
+		print(tbad,'/tmp/autofd.pid detected indicating autofd already running')
+		sys.exit(1)
+
+	os.system('touch /tmp/autofd.pid')
 
 	if sys.version_info <= (3, 0):
 		print(tbad,"This script requires Python 3.4+\n",tend)
@@ -777,6 +807,8 @@ def main():
 		with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
 				server.login(sender_email, password)
 				server.sendmail(sender_email, receiver_email, msg.as_string())	
+
+	os.rmtree('/tmp/autofd.pid')
 
 if __name__ == "__main__":
     main()

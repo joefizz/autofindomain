@@ -65,3 +65,4 @@ animation_on = true
 send_results_to_slack = false
 slack_channel = autofd
 slack_oauth_token = xoxb-xxxxxxxxxxxxxxxxx-xxxxxxxxxxxx
+slack_signing_secret = 4a7ab5fd678cxxxxxxxxxxxxxxxxx
