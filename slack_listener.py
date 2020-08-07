@@ -25,7 +25,7 @@ def verify_request(request):
 		print("Verification failed. Request is out of date.")
 		return False
 	# Create a basestring by concatenating the version, the request  
-	  timestamp, and the request body
+	timestamp, and the request body
 	basestring = f"v0:{slack_request_timestamp}:{request_body}".encode("utf-8")
 	# Hash the basestring using your signing secret, take the hex digest, and prefix with the version number
 	my_signature = (
