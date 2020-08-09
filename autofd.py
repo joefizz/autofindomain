@@ -93,7 +93,8 @@ print(tnormal,"Timestamp: "+timestamp,tend)
 new_program = 0
 
 def subEnumerate(program, linux):
-	print(tnormal, "--- Beginning subdomain search of domains in " + program, tend)
+	start = datetime.now()
+	print(tnormal, str(start) + " - Beginning subdomain search of domains in " + program , tend)
 	linux = linux
 	f = open("programs/" + program + "/domains.txt")
 	for domain in f:
@@ -145,9 +146,14 @@ def subEnumerate(program, linux):
 		except Exception as e:
 			print(e)
 		done = True
-		print(tgood,"--- Latest subdomain results available in "+path+"_latest.txt",tend)
+		end = datetime.now()
+		runtime = end-start
+		print(tgood, str(end)+" - Latest subdomain results available in "+path+"_latest.txt",tend)
+		print(tnormal, '--- runtime: '+str(runtime))
 
 def subTrack(program):
+	start = datetime.now()
+	print(tnormal, str(start)+' - beginning tracking of results for '+program, tend)
 	global new_program
 	new_domain_count = 0
 	new_domain_total = 0
@@ -178,20 +184,25 @@ def subTrack(program):
 			shutil.move(path+"_latest-"+timestamp+".txt", path+"_latest.txt")
 		except Exception as e:
 			print(e)
-
 	os.system("echo 'New subdomains for "+program+":' > programs/"+program+"/report.txt")
 	os.system("cat programs/"+program+"/*_new-"+timestamp+".txt >> programs/"+program+"/report.txt")
+	end = datetime.now()
+	runtime = end-start
+	print(tgood, str(end)+' - tracking completed - runtime: '+str(runtime), tend)
+
 	return new_domain_total
 
 def subNmap(program):
+
 	print(tnormal,"--- Removing historic nmap files from "+program+" folder.",tend)
 	dir = "./programs/"+program
 	for f in os.listdir(dir):
 		if re.search('nmap', f):
 			print("    deleting: "+f)
 			os.remove(os.path.join(dir, f))	
+	start = datetime.now()
 
-	print(tnormal,"--- Beginning NMAP scans of all new subdomains discovered for "+program,tend)
+	print(tnormal,str(start)+" - Beginning NMAP scans of all new subdomains discovered for "+program,tend)
 	f = open("programs/" + program + "/domains.txt")
 	port_count = 0
 	for domain in f:
@@ -251,6 +262,10 @@ def subNmap(program):
 			xmlFiles.append(os.path.join(dir, f))
 	if xmlFiles:
 		xmlMerge(xmlFiles, program)
+	end = datetime.now()
+	runtime = end-start
+
+	print(tnormal, '--- runtime: '+str(runtime))
 
 	return port_count
 
@@ -306,8 +321,10 @@ def xmlMerge(xmlFiles, program):
 	mFile.close()
 
 def subAquatone(program):
+	start = datetime.now()
+
 	screenshots = 0
-	print(tgood,"--- beginning aquatone enumeration of all new subdomains discovered for "+program,tend)
+	print(tgood, str(start) +" - beginning aquatone enumeration of all new subdomains discovered for "+program,tend)
 
 	if aquatone_nmap == 'true':
 		try:
@@ -385,6 +402,9 @@ def subAquatone(program):
 	iFile = open(indexFile, "w")  
 	iFile.write(index_html) 
 	iFile.close()			
+	end = datetime.now()
+	runtime = end-start
+	print(tnormal, str(end)+' - Aquatone finished. runtime: '+str(runtime))
 
 	return screenshots
 
@@ -511,7 +531,9 @@ def ctrlc(sig, frame):
 	signal.signal(signal.SIGINT, ctrlc)
 
 def fin(status):
-	shutil.rmtree('/tmp/autofd.pid')
+	total_runtime = datetime.now()-now
+	print(tgood,'\n---- autoFD complete.  Total running time: '+str(total_runtime)+'\n')
+	os.remove('/tmp/autofd.pid')
 
 	sys.exit(status)
 
@@ -528,7 +550,7 @@ def main():
 
 	if sys.version_info <= (3, 0):
 		print(tbad,"This script requires Python 3.4+\n",tend)
-		sys.exit(1)
+		fin(1)
 
 	if nmap_on == 'true':
 		try:
@@ -536,7 +558,7 @@ def main():
 			proc = subprocess.call(['nmap','--version'],stdout=FNULL, stderr=subprocess.STDOUT)
 		except OSError as e:
 			print (tbad,'*** Nmap is not installed in path, install nmap to path or disable port scanning in config.ini\n',tend)
-			exit()
+			fin(1)
 
 	if aquatone_on == 'true':
 		try:
@@ -544,14 +566,14 @@ def main():
 			proc = subprocess.call(['aquatone','-version'],stdout=FNULL, stderr=subprocess.STDOUT)
 		except OSError as e:
 			print (tbad,'*** Aquatone is not installed in path, install nmap to path or disable port scanning in config.ini\n',tend)
-			exit()
+			fin(1)
 		
 		try:
 			FNULL = open(os.devnull, 'w')
 			proc = subprocess.call(['ls',aquatone_web_path],stdout=FNULL, stderr=subprocess.STDOUT)
 		except OSError as e:
 			print (tbad,'*** Aquatone HTML output folder does not exist.  Check aquatone_web_path in config.ini\n',tend)
-			exit()
+			fin(1)
 
 
 	if platform.system() == "Linux":
@@ -561,11 +583,11 @@ def main():
 		linux = "false"
 	else:
 		print(tbad,"AutoFD currently only works on mac and Linux.",tend)
-		exit()
+		fin(1)
 
 	if len(sys.argv) < 2:
 		print(tgood+"autofd usage\n\n./autofd.py <option>\n\nOptions: enum, add, del, list, email, purge\n",tend)
-		exit()
+		fin(1)
 
 	if (sys.argv[1]).lower() == "enum" or (sys.argv[1]).lower() == "program":
 		
@@ -573,10 +595,10 @@ def main():
 			if os.geteuid() != 0:
 				print(talert,"*** autoFD on Linux requires running as sudo.  \nThis is to improve nmap scan speed, but more importantly to ensure permissions for various things work.",tend)
 				if not input("\n  Enter YES to continue without sudo and watch the world burn: ").lower() == 'yes':
-					exit()
+					fin(1)
 		if os.path.isfile(programs) == False:
 			print(tbad,"No programs to enumerate.  Have you run `./autofindomain.py add`  ?",tend)
-			exit()
+			fin(1)
 		if linux == "true":
 			print(tnormal,"--- Downloading latest version of findomain",tend)
 			if os.path.isfile("./findomain-linux"):
@@ -639,12 +661,12 @@ def main():
 					count+=1
 			if count == 0:
 				print(tbad,"Program with name '"+program+"' does not exist in programs.txt, add with './autofd add <program name>'\n",tend)
-				exit()
+				fin(1)
 
 			print("\n\n *** Program = " + program)
 			if sum(1 for line in open('./programs/'+program+'/domains.txt')) < 1:
 					print(tbad, '*** Program %s does not have any domains.  Add them to domains.txt or use:\n\n    ./autofd.py add-domain <program> <domain>'%(program),tend)
-					exit()
+					fin(1)
 			subEnumerate(program,linux)
 			new_domains = subTrack(program)
 			print("--- send_blank_emails: "+send_blank_emails)
@@ -664,7 +686,7 @@ def main():
 				toSlack(program)
 			folder_clean(program)
 
-		exit()
+		fin(1)
 
 	if (sys.argv[1]) == "slack":
 		program = sys.argv[2].rstrip('\n')
@@ -675,7 +697,7 @@ def main():
 			if line == program:
 				print("Program " + program +" exists")
 				toSlack(program)
-				exit()
+				fin(1)
 		p.close()
 
 
@@ -690,7 +712,7 @@ def main():
 			program = program.rstrip('\n')
 			if program == newProgram:
 				print("Program " + newProgram +" already exists")
-				exit()
+				fin(1)
 		p.close()
 		p = open(programs, 'a')
 		p.write("\n"+newProgram)
@@ -709,7 +731,7 @@ def main():
 	if (sys.argv[1]) == "add-domain":
 		if len(sys.argv) < 4:
 			print(tnormal,'./autofd.py add-domain <program> <domain> <domain> <domain> ...')
-			exit()
+			fin(1)
 		program = sys.argv[2].rstrip('\n')
 		domain = sys.argv[3].rstrip('\n')
 		p = open(programs)
@@ -741,13 +763,13 @@ def main():
 					line = line.rstrip('\n')
 					print(line)
 				d.close()
-				exit()
+				fin(1)
 		print(tbad,'Program [%s] does not exist. use \'./autofd list\' to show existing programs'%(program),tend)
 
 	if sys.argv[1] == "del":
 		if os.path.isfile(programs) == False:
 			print("No programs to delete")
-			exit()
+			fin(1)
 		program = sys.argv[2]
 		print("Deleting "+ program +" from programs.txt.  This will not remove the data folder from ./programs/")
 		with open(programs, "r") as p:
@@ -770,14 +792,14 @@ def main():
 						shutil.rmtree("./programs/"+folder)
 						count+=1
 		print("Deleted "+str(count)+" directories from ./programs/")
-		exit()
+		fin(1)
 
 	if sys.argv[1] == "list":
 		pcount = 0
 		dcount = 0
 		if os.path.isfile(programs) == False:
 			print("No programs to list.  add with add")
-			exit()
+			fin(1)
 		print(tnormal,"Current programs that will be enumerated:",tend)
 		p = open(programs)
 		for program in p:
@@ -790,7 +812,7 @@ def main():
 				print("    "+domain.rstrip('\n'))
 		print(tgood,'\n ---- Total programs: %s'%(str(pcount)),tend)
 		print(tgood,'---- Total domains across all programs: %s'%(str(dcount)),tend)
-		exit()
+		fin(1)
 
 	#if sys.argv[1] == "dns":
 	#	print("Updating resolvers")
@@ -808,7 +830,7 @@ def main():
 				server.login(sender_email, password)
 				server.sendmail(sender_email, receiver_email, msg.as_string())	
 
-	os.rmtree('/tmp/autofd.pid')
+	os.remove('/tmp/autofd.pid')
 
 if __name__ == "__main__":
     main()
