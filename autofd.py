@@ -517,7 +517,7 @@ def folder_clean(program):
 def ctrlc(sig, frame):
 	c = input('Ctrl-c detected, would you like to (e)nd or (c)ontinue?').lower()
 	if c == 'e':
-		fin()
+		fin(1)
 	signal.signal(signal.SIGINT, original_sigint)
 
 	try:
