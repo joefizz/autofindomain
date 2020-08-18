@@ -1,5 +1,6 @@
 # Email settings
 [email]
+enable_email = True
 port = 465
 password = Password123
 sender_email = email@gmail.com

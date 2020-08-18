@@ -35,6 +35,7 @@ parser = configparser.ConfigParser()
 parser.read('config.ini')
 
 # email settings
+enable_email = parser['email']['enable_email'].lower()
 port = parser['email']['port']
 password = parser['email']['password']
 sender_email = parser['email']['sender_email']
@@ -640,8 +641,9 @@ def main():
 						if new_program == 0 or aquatone_new == 'true':
 							aquatone = True
 							screenshots = subAquatone(program)
-				if send_blank_emails == 'true' or new_domains > 0:
-					subReport(program)
+				if enable_email == 'true':
+					if send_blank_emails == 'true' or new_domains > 0:
+						subReport(program)
 				if send_results_to_slack == 'true' and new_domains > 0 and new_program == 0 and screenshots > 0:
 					toSlack(program)
 				folder_clean(program)
@@ -680,8 +682,10 @@ def main():
 					if new_program == 0 or aquatone_new == 'true':
 						aquatone = True
 						screenshots = subAquatone(program)
-			if send_blank_emails == 'true' or new_domains > 0:
-				subReport(program)
+			
+			if enable_email == 'true':
+				if send_blank_emails == 'true' or new_domains > 0:
+					subReport(program)
 			if send_results_to_slack == 'true' and new_domains > 0 and new_program == 0 and screenshots > 0:
 				toSlack(program)
 			folder_clean(program)
