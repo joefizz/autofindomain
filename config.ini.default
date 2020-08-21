@@ -67,3 +67,8 @@ send_results_to_slack = false
 slack_channel = autofd
 slack_oauth_token = xoxb-xxxxxxxxxxxxxxxxx-xxxxxxxxxxxx
 slack_signing_secret = 4a7ab5fd678cxxxxxxxxxxxxxxxxx
+
+# FFuF setting
+[ffuf]
+ffuf_on = True
+ffuf_on_new = False

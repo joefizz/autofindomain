@@ -74,6 +74,9 @@ send_results_to_slack = parser['slack']['send_results_to_slack'].lower()
 slack_channel = parser['slack']['slack_channel']
 slack_oauth_token = parser['slack']['slack_oauth_token']
 
+# FFuF settings
+ffuf_on = parser['ffuf']['ffuf_on'].lower()
+ffuf_on_new = parser['ffuf']['ffuf_on_new'].lower()
 # Set colours for output
 
 if colours == 'true':
@@ -92,6 +95,7 @@ print(tnormal,"Timestamp: "+timestamp,tend)
 
 # variable to record if current program is new (1 for mew, 0 for old)
 new_program = 0
+total_subdomains = 0
 
 def subEnumerate(program, linux):
 	start = datetime.now()
@@ -436,11 +440,40 @@ def subReport(program):
 			server.sendmail(sender_email, receiver_email.split(','), msg.as_string())
 		except Exception as e:
 			print(e)
+
+def dirsearch(program, linux):
+	print (tgood,"Beginning directory search for new subdomains in %s"%(program),tend)
+	linux = linux
+	f = open('./programs/'+program+'/aquatone_session.json')
+	data = json.load(f)
+	f.close()
+
+	for (k,v) in data.items():
+		if k == 'pages':
+			for key in v:
+				url = v[key]['url']
+				hostname = v[key]['hostname']
+				fuzzname = url+'FUZZ'
+				if 'https' in url:
+					hostname = 'https-'+hostname
+				print (tgood,"--- Beginning directory search on %s"%(url),tend)
+
+				if linux == 'true':
+					try:
+						os.system('./ffuf/linux/ffuf -maxtime 120 -s -o ./programs/'+program+'/'+hostname+'-ffuf_out-'+timestamp+'.json -timeout 5 -u '+ fuzzname+ ' -w ./ffuf/dict.txt -D -e php,txt,html -ic -ac -fc 403')
+					except OSError as e:
+						print (e.output)
+				else:
+					try:
+						os.system('./ffuf/mac/ffuf -maxtime 120 -s -o ./programs/'+program+'/'+hostname+'-ffuf_out-'+timestamp+'.json -timeout 5 -u '+ fuzzname+ ' -w ./ffuf/dict.txt -D -e php,txt,html -ic -ac -fc 403')
+					except OSError as e:
+						print (e.output)				
+	
 		
 def toSlack(program):
 	print (tgood,"Sending latest data for %s to slack"%(program),tend)
 	slack_api = 'https://slack.com/api/'
-
+	results_list = 'FFuF Results:\n'
 	f = open('./programs/'+program+'/aquatone_session.json')
 	data = json.load(f)
 	f.close()
@@ -448,6 +481,7 @@ def toSlack(program):
 		if k == 'pages':
 			for key in v:
 				url = v[key]['url']
+				hostname = v[key]['hostname']
 				screenshotPath = v[key]['screenshotPath']
 				IP = v[key]['addrs']
 				status = v[key]['status']
@@ -456,9 +490,18 @@ def toSlack(program):
 				htext = header.read()
 				header.close()
 				proxies = {"http": "http://127.0.0.1:8080", "https": "http://127.0.0.1:8080"}
-
+				if 'https' in url:
+					hostname = 'https-'+hostname
+				f = open('./programs/'+program+'/'+hostname+'-ffuf_out-'+timestamp+'.json')
+				ffufdata = json.load(f)
+				f.close()
+				for (k1,v1) in ffufdata.items():
+					if k1 == 'results':
+						results = v1
+				for r in results:
+					results_list += str(r['status'])+' - '+r['url']+'\n'
 				try:
-					data = {'initial_comment':'New subdomain discovered for '+program+': '+url+'\n - with status '+str(status)+'\n - pointing to '+str(IP)+'\n- full results: '+aquatone_url+'/'+program+'/aquatone_report.html\n'+'```'+htext+'```','channels':slack_channel}
+					data = {'initial_comment':'New subdomain discovered for '+program+': '+url+'\n - with status '+str(status)+'\n - pointing to '+str(IP)+'\n- full results: '+aquatone_url+'/'+program+'/aquatone_report.html\n'+'```'+htext+'```\n'+results_list,'channels':slack_channel}
 				except Exception as e:
 					print(e)
 				headers = {'Authorization':'Bearer '+slack_oauth_token}
@@ -514,23 +557,7 @@ def folder_clean(program):
 		except:
 			print(tbad, "Error while deleting file : ", f, tend)
 
-def dirsearch(program):
-	print (tgood,"Beginning directory search for new subdomains in %s"%(program),tend)
-	f = open('./programs/'+program+'/aquatone_session.json')
-	data = json.load(f)
-	f.close()
-
-	for (k,v) in data.items():
-		if k == 'pages':
-			for key in v:
-				url = v[key]['url']
-				hostname = v[key]['hostname']
-				fuzzname = url+'FUZZ'
-				try:
-					ffuf = subprocess.Popen(('./ffuf/ffuf', '-o', './programs/'+program+'/'+hostname+'_ffuf_out'+timestamp+'.json', '-timeout', '5', '-u', fuzzname, '-w', './ffuf/dict.txt', '-D', '-e', 'php,txt,html', '-ic', '-ac', '-fc', '403'))
-				except OSError as e:
-					print (e.output)
-				
+			
 def ctrlc(sig, frame):
 	c = input('Ctrl-c detected, would you like to (e)nd or (c)ontinue?').lower()
 	if c == 'e':
@@ -650,20 +677,28 @@ def main():
 				subEnumerate(program,linux)
 				new_domains = subTrack(program)
 				print("--- New subdomains: "+str(new_domains))
+				total_subdomains += new_domains
 				port_count = 0
 				if nmap_on == 'true' and new_domains > 0:
 					if new_program == 0 or nmap_new == 'true':
 						port_count = subNmap(program)
+
 					if aquatone_on == 'true' and port_count > 0:
 						if new_program == 0 or aquatone_new == 'true':
 							aquatone = True
 							screenshots = subAquatone(program)
+						if ffuf_on == 'true':
+							if new_program == 0 or ffuf_on_new == 'true':
+								dirsearch(program, linux)
+
 				if enable_email == 'true':
 					if send_blank_emails == 'true' or new_domains > 0:
 						subReport(program)
+
 				if send_results_to_slack == 'true' and new_domains > 0 and new_program == 0 and screenshots > 0:
 					toSlack(program)
 				folder_clean(program)
+				print(tgood,'--- Total new subdomains discovered during enumeration: '+str(total_subdomains))
 				new_program = 0
 
 
@@ -699,7 +734,9 @@ def main():
 					if new_program == 0 or aquatone_new == 'true':
 						aquatone = True
 						screenshots = subAquatone(program)
-			
+					if ffuf_on == 'true':
+						if new_program == 0 or ffuf_on_new == 'true':
+							dirsearch(program, linux)
 			if enable_email == 'true':
 				if send_blank_emails == 'true' or new_domains > 0:
 					subReport(program)
