@@ -95,7 +95,6 @@ print(tnormal,"Timestamp: "+timestamp,tend)
 
 # variable to record if current program is new (1 for mew, 0 for old)
 new_program = 0
-total_subdomains = 0
 
 def subEnumerate(program, linux):
 	start = datetime.now()
@@ -585,6 +584,7 @@ def fin(status):
 def main():
 
 	global new_program
+	total_subdomains = 0
 	original_sigint = signal.getsignal(signal.SIGINT)
 	signal.signal(signal.SIGINT, ctrlc)
 	if os.path.isfile('/tmp/autofd.pid'):
