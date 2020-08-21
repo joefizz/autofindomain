@@ -514,6 +514,23 @@ def folder_clean(program):
 		except:
 			print(tbad, "Error while deleting file : ", f, tend)
 
+def dirsearch(program):
+	print (tgood,"Beginning directory search for new subdomains in %s"%(program),tend)
+	f = open('./programs/'+program+'/aquatone_session.json')
+	data = json.load(f)
+	f.close()
+
+	for (k,v) in data.items():
+		if k == 'pages':
+			for key in v:
+				url = v[key]['url']
+				hostname = v[key]['hostname']
+				fuzzname = url+'FUZZ'
+				try:
+					ffuf = subprocess.Popen(('./ffuf/ffuf', '-o', './programs/'+program+'/'+hostname+'_ffuf_out'+timestamp+'.json', '-timeout', '5', '-u', fuzzname, '-w', './ffuf/dict.txt', '-D', '-e', 'php,txt,html', '-ic', '-ac', '-fc', '403'))
+				except OSError as e:
+					print (e.output)
+				
 def ctrlc(sig, frame):
 	c = input('Ctrl-c detected, would you like to (e)nd or (c)ontinue?').lower()
 	if c == 'e':
