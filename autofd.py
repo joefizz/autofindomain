@@ -472,13 +472,14 @@ def dirsearch(program, linux):
 def toSlack(program):
 	print (tgood,"Sending latest data for %s to slack"%(program),tend)
 	slack_api = 'https://slack.com/api/'
-	results_list = 'FFuF Results:\n'
 	f = open('./programs/'+program+'/aquatone_session.json')
 	data = json.load(f)
 	f.close()
 	for (k,v) in data.items():
 		if k == 'pages':
 			for key in v:
+				results_list = 'FFuF Results:\n'
+
 				url = v[key]['url']
 				hostname = v[key]['hostname']
 				screenshotPath = v[key]['screenshotPath']
@@ -491,14 +492,19 @@ def toSlack(program):
 				proxies = {"http": "http://127.0.0.1:8080", "https": "http://127.0.0.1:8080"}
 				if 'https' in url:
 					hostname = 'https-'+hostname
-				f = open('./programs/'+program+'/'+hostname+'-ffuf_out-'+timestamp+'.json')
-				ffufdata = json.load(f)
-				f.close()
-				for (k1,v1) in ffufdata.items():
-					if k1 == 'results':
-						results = v1
-				for r in results:
-					results_list += str(r['status'])+' - '+r['url']+'\n'
+
+				try:
+					f = open('./programs/'+program+'/'+hostname+'-ffuf_out-'+timestamp+'.json')
+					ffufdata = json.load(f)
+					f.close()
+				except Exception as e:
+					print(e)
+				else:
+					for (k1,v1) in ffufdata.items():
+						if k1 == 'results':
+							results = v1
+					for r in results:
+						results_list += str(r['status'])+' - '+r['url']+'\n'
 				try:
 					data = {'initial_comment':'New subdomain discovered for '+program+': '+url+'\n - with status '+str(status)+'\n - pointing to '+str(IP)+'\n- full results: '+aquatone_url+'/'+program+'/aquatone_report.html\n'+'```'+htext+'```\n'+results_list,'channels':slack_channel}
 				except Exception as e:
