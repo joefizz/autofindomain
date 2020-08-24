@@ -897,4 +897,6 @@ def main():
 	os.remove('/tmp/autofd.pid')
 
 if __name__ == "__main__":
+	original_sigint = signal.getsignal(signal.SIGINT)
+	signal.signal(signal.SIGINT, exit_gracefully)
     main()
