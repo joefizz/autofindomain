@@ -246,7 +246,7 @@ def subNmap(program):
 				t.start()
 			try:
 				FNULL = open(os.devnull, 'w')
-				proc = subprocess.call(['nmap','-n']+nmap_args, stdout=FNULL, stderr=subprocess.STDOUT)
+				proc = subprocess.call(['nmap','-n','--open']+nmap_args, stdout=FNULL, stderr=subprocess.STDOUT)
 			except OSError as e:
 				print (e.output)
 			shutil.move('programs/'+program+'/'+subdomain+'_nmap_'+timestamp+'.nmap', path+'_nmap_'+timestamp+'.txt')
