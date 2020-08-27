@@ -165,7 +165,7 @@ def subTrack(program):
 	for domain in f:
 		domain = domain.rstrip('\n')
 		path="programs/"+program+"/"+domain
-		print(tnormal,"\n--- Comparing new discoveries to existing discoveries",tend)
+		print(tnormal,"\n--- Comparing new discoveries to existing discoveries for "+domain,tend)
 		if os.path.isfile(path+"_all.txt") == False:
 			print("First enum for this domain, no results to compare")
 			os.system("cp "+path+"_latest-"+timestamp+".txt "+path+"_all.txt")
@@ -309,8 +309,7 @@ def xmlMerge(xmlFiles, program):
 					h += 1
 					cHost = ET.tostring(host, encoding='unicode', method='xml') 
 					mergFile.write(cHost)
-					mergFile.flush()
-		os.remove(xml)	
+					mergFile.flush()	
 		hosts_count += h
 
 	# Add Footer to mergefile
@@ -338,7 +337,7 @@ def subAquatone(program):
 			print (e.output)
 	else:
 		try:
-			cat = subprocess.Popen(('cat', './programs/'+program+'/nmap_merged_'+timestamp+'.xml'), stdout=subprocess.PIPE)
+			cat = subprocess.Popen(('cat', './programs/'+program+'/'+domain+'_latest-'+timestamp+'.txt'), stdout=subprocess.PIPE)
 			aqua = subprocess.call(('aquatone', '-out', './programs/'+program, '-http-timeout', aquatone_http_timeout), stdin=cat.stdout)
 		except OSError as e:
 			print (e.output)
@@ -478,8 +477,8 @@ def toSlack(program):
 	for (k,v) in data.items():
 		if k == 'pages':
 			for key in v:
-				results_list = 'FFuF Results:\n'
-
+				results_list = '- FFuF Results:\n'
+				ports_list = '\n- open ports:\n'
 				url = v[key]['url']
 				hostname = v[key]['hostname']
 				screenshotPath = v[key]['screenshotPath']
@@ -490,6 +489,11 @@ def toSlack(program):
 				htext = header.read()
 				header.close()
 				proxies = {"http": "http://127.0.0.1:8080", "https": "http://127.0.0.1:8080"}
+				tree = ET.parse('./programs/'+program+'/'+hostname+'_nmap_'+timestamp+'.xml')
+				root = tree.getroot()
+				for port in root.iter('port'):
+					ports_list += '   '+str(port.attrib['protocol']+' : '+port.attrib['portid'] + '\n')
+
 				if 'https' in url:
 					hostname = 'https-'+hostname
 
@@ -506,7 +510,7 @@ def toSlack(program):
 					for r in results:
 						results_list += str(r['status'])+' - '+r['url']+'\n'
 				try:
-					data = {'initial_comment':'New subdomain discovered for '+program+': '+url+'\n - with status '+str(status)+'\n - pointing to '+str(IP)+'\n- full results: '+aquatone_url+'/'+program+'/aquatone_report.html\n'+'```'+htext+'```\n'+results_list,'channels':slack_channel}
+					data = {'initial_comment':'New subdomain discovered for '+program+': '+url+'\n - with status '+str(status)+'\n - pointing to '+str(IP)+ports_list+'\n- full aquatone results: '+aquatone_url+'/'+program+'/aquatone_report.html\n'+'```'+htext+'```\n'+results_list,'channels':slack_channel}
 				except Exception as e:
 					print(e)
 				headers = {'Authorization':'Bearer '+slack_oauth_token}
@@ -704,8 +708,9 @@ def main():
 				if send_results_to_slack == 'true' and new_domains > 0 and new_program == 0 and screenshots > 0:
 					toSlack(program)
 				folder_clean(program)
-				print(tgood,'--- Total new subdomains discovered during enumeration: '+str(total_subdomains))
+				
 				new_program = 0
+			print(tgood,'--- Total new subdomains discovered during enumeration: '+str(total_subdomains))
 
 
 		elif (sys.argv[1]).lower() == "program":
@@ -898,5 +903,5 @@ def main():
 
 if __name__ == "__main__":
 	original_sigint = signal.getsignal(signal.SIGINT)
-	signal.signal(signal.SIGINT, exit_gracefully)
-    main()
+	signal.signal(signal.SIGINT, ctrlc)
+	main()
