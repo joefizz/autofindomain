@@ -492,7 +492,7 @@ def toSlack(program):
 				tree = ET.parse('./programs/'+program+'/'+hostname+'_nmap_'+timestamp+'.xml')
 				root = tree.getroot()
 				for port in root.iter('port'):
-					ports_list += '   '+str(port.attrib['protocol']+' : '+port.attrib['portid'] + '\n')
+					ports_list += '    '+str(port.attrib['protocol']+' : '+port.attrib['portid'] + '\n')
 
 				if 'https' in url:
 					hostname = 'https-'+hostname
