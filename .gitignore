@@ -10,3 +10,7 @@ excludedomains.txt
 subfinder_config.yaml
 html/*
 headers/*
+screenshots/*
+aquatone_urls.txt
+aquatone_session.json
+aquatone_report.html
