@@ -8,3 +8,5 @@ programs/*
 exclude.txt
 excludedomains.txt
 subfinder_config.yaml
+html/*
+headers/*
