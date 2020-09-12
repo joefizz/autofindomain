@@ -72,3 +72,8 @@ slack_signing_secret = 4a7ab5fd678cxxxxxxxxxxxxxxxxx
 [ffuf]
 ffuf_on = True
 ffuf_on_new = False
+
+# nuclei settings
+[nuclei]
+nuclei_on = true
+nuclei_on_new = false

@@ -77,8 +77,12 @@ slack_oauth_token = parser['slack']['slack_oauth_token']
 # FFuF settings
 ffuf_on = parser['ffuf']['ffuf_on'].lower()
 ffuf_on_new = parser['ffuf']['ffuf_on_new'].lower()
-# Set colours for output
 
+# nuclei settings
+nuclei_on = parser['nuclei']['nuclei_on'].lower()
+nuclei_on_new = parser['nuclei']['nuclei_on_new'].lower()
+
+# Set colours for output
 if colours == 'true':
 	tgood = '\033[32m'
 	tnormal = '\033[33m'
@@ -188,7 +192,6 @@ def subTrack(program):
 			shutil.move(path+"_latest-"+timestamp+".txt", path+"_latest.txt")
 		except Exception as e:
 			print(e)
-	os.system("echo 'New subdomains for "+program+":' > programs/"+program+"/report.txt")
 	os.system("cat programs/"+program+"/*_new-"+timestamp+".txt >> programs/"+program+"/report.txt")
 	end = datetime.now()
 	runtime = end-start
@@ -332,13 +335,13 @@ def subAquatone(program):
 	if aquatone_nmap == 'true':
 		try:
 			cat = subprocess.Popen(('cat', './programs/'+program+'/nmap_merged_'+timestamp+'.xml'), stdout=subprocess.PIPE)
-			aqua = subprocess.call(('aquatone', '-nmap', '-out', './programs/'+program, '-http-timeout', aquatone_http_timeout), stdin=cat.stdout)
+			aqua = subprocess.call(('aquatone', '-nmap', '-out', './programs/'+program,'-ports', 'xlarge', '-http-timeout', aquatone_http_timeout), stdin=cat.stdout)
 		except OSError as e:
 			print (e.output)
 	else:
 		try:
-			cat = subprocess.Popen(('cat', './programs/'+program+'/'+domain+'_latest-'+timestamp+'.txt'), stdout=subprocess.PIPE)
-			aqua = subprocess.call(('aquatone', '-out', './programs/'+program, '-http-timeout', aquatone_http_timeout), stdin=cat.stdout)
+			cat = subprocess.Popen(('cat', './programs/'+program+'/report.txt'), stdout=subprocess.PIPE)
+			aqua = subprocess.call(('aquatone', '-out', './programs/'+program, '-ports', 'xlarge', '-http-timeout', aquatone_http_timeout), stdin=cat.stdout)
 		except OSError as e:
 			print (e.output)
 
@@ -466,8 +469,24 @@ def dirsearch(program, linux):
 						os.system('./ffuf/mac/ffuf -maxtime 120 -s -o ./programs/'+program+'/'+hostname+'-ffuf_out-'+timestamp+'.json -timeout 5 -u '+ fuzzname+ ' -w ./ffuf/dict.txt -D -e php,txt,html -ic -ac -fc 403')
 					except OSError as e:
 						print (e.output)				
-	
-		
+
+def nuclei(program):
+	print (tgood,"Beginning nuclei scan for new subdomains in %s"%(program),tend)
+	f = open('./programs/'+program+'/aquatone_session.json')
+	data = json.load(f)
+	f.close()
+	hosts = set()
+	for (k,v) in data.items():
+		if k == 'pages':
+			for key in v:
+				url = v[key]['url']
+				hostname = v[key]['hostname']
+				if 'https' in url:
+					hostname = 'https-'+hostname
+				hosts.add(url)
+	print(hosts)
+	os.system('cat ./programs/'+program+'/report.txt | ./nuclei/mac/nuclei -t ../nuclei-templates/cves/ -t ../nuclei-templates/files/ -o ./programs/'+program+'/nuclei-out-'+timestamp+'.txt -silent')
+
 def toSlack(program):
 	print (tgood,"Sending latest data for %s to slack"%(program),tend)
 	slack_api = 'https://slack.com/api/'
@@ -479,6 +498,7 @@ def toSlack(program):
 			for key in v:
 				results_list = '- FFuF Results:\n'
 				ports_list = '\n- open ports:\n'
+				nuclei_results = '\n- nuclei results:\n'
 				url = v[key]['url']
 				hostname = v[key]['hostname']
 				screenshotPath = v[key]['screenshotPath']
@@ -510,7 +530,13 @@ def toSlack(program):
 					for r in results:
 						results_list += str(r['status'])+' - '+r['url']+'\n'
 				try:
-					data = {'initial_comment':'New subdomain discovered for '+program+': '+url+'\n - with status '+str(status)+'\n - pointing to '+str(IP)+ports_list+'\n- full aquatone results: '+aquatone_url+'/'+program+'/aquatone_report.html\n'+'```'+htext+'```\n'+results_list,'channels':slack_channel}
+					with open('./programs/'+program+'/nuclei-out-'+timestamp+'.txt', 'r') as file:
+						nuclei_results = file.read().replace('\n', '')
+				except Exception as e:
+					print(e)
+
+				try:
+					data = {'initial_comment':'New subdomain discovered for '+program+': '+url+'\n - with status '+str(status)+'\n - pointing to '+str(IP)+ports_list+'\n- full aquatone results: '+aquatone_url+'/'+program+'/aquatone_report.html\n'+'```'+htext+'```\n'+results_list+nuclei_results,'channels':slack_channel}
 				except Exception as e:
 					print(e)
 				headers = {'Authorization':'Bearer '+slack_oauth_token}
@@ -700,6 +726,9 @@ def main():
 						if ffuf_on == 'true':
 							if new_program == 0 or ffuf_on_new == 'true':
 								dirsearch(program, linux)
+						if nuclei_on == 'true':
+							if new_program == 0 or nuclei_on_new == 'true':
+								nuclei(program)
 
 				if enable_email == 'true':
 					if send_blank_emails == 'true' or new_domains > 0:
@@ -748,6 +777,9 @@ def main():
 					if ffuf_on == 'true':
 						if new_program == 0 or ffuf_on_new == 'true':
 							dirsearch(program, linux)
+					if nuclei_on == 'true':
+							if new_program == 0 or nuclei_on_new == 'true':
+								nuclei(program)
 			if enable_email == 'true':
 				if send_blank_emails == 'true' or new_domains > 0:
 					subReport(program)
