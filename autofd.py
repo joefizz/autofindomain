@@ -335,7 +335,7 @@ def subAquatone(program):
 	if aquatone_nmap == 'true':
 		try:
 			cat = subprocess.Popen(('cat', './programs/'+program+'/nmap_merged_'+timestamp+'.xml'), stdout=subprocess.PIPE)
-			aqua = subprocess.call(('aquatone', '-nmap', '-out', './programs/'+program,'-ports', 'xlarge', '-http-timeout', aquatone_http_timeout), stdin=cat.stdout)
+			aqua = subprocess.call(('aquatone', '-nmap', '-out', './programs/'+program, '-ports', 'xlarge', '-http-timeout', aquatone_http_timeout), stdin=cat.stdout)
 		except OSError as e:
 			print (e.output)
 	else:
@@ -828,6 +828,7 @@ def main():
 		with open(programs, 'w') as filehandle:
 			lines = filter(lambda x: x.strip(), lines)
 			filehandle.writelines(lines)
+		fin()
 
 	if (sys.argv[1]) == "add-domain":
 		if len(sys.argv) < 4:
