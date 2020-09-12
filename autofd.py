@@ -489,9 +489,9 @@ def nuclei(program, linux):
 	print(hosts)
 
 	if linux == 'true':
-		os.system('cat ./programs/'+program+'/report.txt | ./nuclei/linux/nuclei -t ../nuclei-templates/cves/ -t ../nuclei-templates/files/ -o ./programs/'+program+'/nuclei-out-'+timestamp+'.txt -silent')
+		os.system('cat ./programs/'+program+'/report.txt | ./nuclei/linux/nuclei -t ./nuclei/nuclei-templates/cves/ -t ./nuclei/nuclei-templates/files/ -o ./programs/'+program+'/nuclei-out-'+timestamp+'.txt -silent')
 	else:
-		os.system('cat ./programs/'+program+'/report.txt | ./nuclei/mac/nuclei -t ../nuclei-templates/cves/ -t ../nuclei-templates/files/ -o ./programs/'+program+'/nuclei-out-'+timestamp+'.txt -silent')
+		os.system('cat ./programs/'+program+'/report.txt | ./nuclei/mac/nuclei -t ./nuclei/nuclei-templates/cves/ -t ./nuclei/nuclei-templates/files/ -o ./programs/'+program+'/nuclei-out-'+timestamp+'.txt -silent')
 
 def toSlack(program):
 	print (tgood,"Sending latest data for %s to slack"%(program),tend)
