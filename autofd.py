@@ -165,6 +165,7 @@ def subTrack(program):
 	global new_program
 	new_domain_count = 0
 	new_domain_total = 0
+	os.system("echo > programs/"+program+"/report.txt")
 	f = open("programs/" + program + "/domains.txt")
 	for domain in f:
 		domain = domain.rstrip('\n')
