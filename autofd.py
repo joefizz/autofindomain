@@ -471,7 +471,8 @@ def dirsearch(program, linux):
 					except OSError as e:
 						print (e.output)				
 
-def nuclei(program):
+def nuclei(program, linux):
+	linux = linux
 	print (tgood,"Beginning nuclei scan for new subdomains in %s"%(program),tend)
 	f = open('./programs/'+program+'/aquatone_session.json')
 	data = json.load(f)
@@ -486,7 +487,11 @@ def nuclei(program):
 					hostname = 'https-'+hostname
 				hosts.add(url)
 	print(hosts)
-	os.system('cat ./programs/'+program+'/report.txt | ./nuclei/mac/nuclei -t ../nuclei-templates/cves/ -t ../nuclei-templates/files/ -o ./programs/'+program+'/nuclei-out-'+timestamp+'.txt -silent')
+
+	if linux == 'true':
+		os.system('cat ./programs/'+program+'/report.txt | ./nuclei/linux/nuclei -t ../nuclei-templates/cves/ -t ../nuclei-templates/files/ -o ./programs/'+program+'/nuclei-out-'+timestamp+'.txt -silent')
+	else:
+		os.system('cat ./programs/'+program+'/report.txt | ./nuclei/mac/nuclei -t ../nuclei-templates/cves/ -t ../nuclei-templates/files/ -o ./programs/'+program+'/nuclei-out-'+timestamp+'.txt -silent')
 
 def toSlack(program):
 	print (tgood,"Sending latest data for %s to slack"%(program),tend)
@@ -729,7 +734,7 @@ def main():
 								dirsearch(program, linux)
 						if nuclei_on == 'true':
 							if new_program == 0 or nuclei_on_new == 'true':
-								nuclei(program)
+								nuclei(program, linux)
 
 				if enable_email == 'true':
 					if send_blank_emails == 'true' or new_domains > 0:
@@ -780,7 +785,7 @@ def main():
 							dirsearch(program, linux)
 					if nuclei_on == 'true':
 							if new_program == 0 or nuclei_on_new == 'true':
-								nuclei(program)
+								nuclei(program, linux)
 			if enable_email == 'true':
 				if send_blank_emails == 'true' or new_domains > 0:
 					subReport(program)
