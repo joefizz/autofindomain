@@ -828,7 +828,7 @@ def main():
 		with open(programs, 'w') as filehandle:
 			lines = filter(lambda x: x.strip(), lines)
 			filehandle.writelines(lines)
-		fin()
+		fin(1)
 
 	if (sys.argv[1]) == "add-domain":
 		if len(sys.argv) < 4:
