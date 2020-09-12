@@ -250,7 +250,7 @@ def subNmap(program):
 				t.start()
 			try:
 				FNULL = open(os.devnull, 'w')
-				proc = subprocess.call(['nmap','-n','--open']+nmap_args, stdout=FNULL, stderr=subprocess.STDOUT)
+				proc = subprocess.call(['nmap','-n','--open','-p','80,81,300,443,591,593,832,981,1010,1311,2082,2087,2095,2096,2480,3000,3128,3333,4243,4567,4711,4712,4993,5000,5104,5108,5800,6543,7000,7396,7474,8000,8001,8008,8014,8042,8069,8080,8081,8088,8090,8091,8118,8123,8172,8222,8243,8280,8281,8333,8443,8500,8834,8880,8888,8983,9000,9043,9060,9080,9090,9091,9200,9443,9800,9981,12443,16080,18091,18092,20720,28017']+nmap_args, stdout=FNULL, stderr=subprocess.STDOUT)
 			except OSError as e:
 				print (e.output)
 			shutil.move('programs/'+program+'/'+subdomain+'_nmap_'+timestamp+'.nmap', path+'_nmap_'+timestamp+'.txt')
@@ -336,7 +336,7 @@ def subAquatone(program):
 	if aquatone_nmap == 'true':
 		try:
 			cat = subprocess.Popen(('cat', './programs/'+program+'/nmap_merged_'+timestamp+'.xml'), stdout=subprocess.PIPE)
-			aqua = subprocess.call(('aquatone', '-nmap', '-out', './programs/'+program, '-ports', 'xlarge', '-http-timeout', aquatone_http_timeout), stdin=cat.stdout)
+			aqua = subprocess.call(('aquatone', '-nmap', '-out', './programs/'+program, '-http-timeout', aquatone_http_timeout), stdin=cat.stdout)
 		except OSError as e:
 			print (e.output)
 	else:
@@ -567,6 +567,9 @@ def testSubdomain(subdomain):
 		if d in subdomain:
 			print('%s contains %s which is in excludedomains.txt'%(subdomain,d))
 			return False
+	if subdomain.count('.') == 1:
+		print('This appears to be a root domain and therefore likely not a wildcard response - %s'%(subdomain))
+		return True
 	if subdomain.count('.') == 2:
 		print('This appears to be attached to the root domain and therefore likely not a wildcard response - %s'%(subdomain))
 		return True
