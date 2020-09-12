@@ -30,7 +30,7 @@ pr.close()
 
 for (k,v) in data.items():
 	for program in v:
-		if str(program['bounty']).lower() = 'true':
+		if str(program['bounty']).lower() == 'true':
 			found = False
 			program_name = program['name'].replace(" ","_").replace("(","").replace(")","").replace("&","and").replace("'","").replace("!","").replace(",","").lower()
 			print(tgood,'\n---- Program: '+program_name,tend)
