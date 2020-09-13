@@ -489,8 +489,10 @@ def nuclei(program, linux):
 	print(hosts)
 
 	if linux == 'true':
+		print('nuclei linux')
 		os.system('cat ./programs/'+program+'/report.txt | ./nuclei/linux/nuclei -t ./nuclei/nuclei-templates/technologies/ -t ./nuclei/nuclei-templates/vulnerabilities/ -t ./nuclei/nuclei-templates/default-credentials/ -t ./nuclei/nuclei-templates/subdomain-takeover/ -t ./nuclei/nuclei-templates/cves/ -t ./nuclei/nuclei-templates/files/ -o ./programs/'+program+'/nuclei-out-'+timestamp+'.txt -silent')
 	else:
+		print('nuclei mac')
 		os.system('cat ./programs/'+program+'/report.txt | ./nuclei/mac/nuclei -t ./nuclei/nuclei-templates/technologies/ -t ./nuclei/nuclei-templates/vulnerabilities/ -t ./nuclei/nuclei-templates/default-credentials/ -t ./nuclei/nuclei-templates/subdomain-takeover/ -t ./nuclei/nuclei-templates/cves/ -t ./nuclei/nuclei-templates/files/ -o ./programs/'+program+'/nuclei-out-'+timestamp+'.txt -silent')
 
 def toSlack(program):
@@ -535,14 +537,9 @@ def toSlack(program):
 							results = v1
 					for r in results:
 						results_list += str(r['status'])+' - '+r['url']+'\n'
-				try:
-					with open('./programs/'+program+'/nuclei-out-'+timestamp+'.txt', 'r') as file:
-						nuclei_results = file.read().replace('\n', '')
-				except Exception as e:
-					print(e)
 
 				try:
-					data = {'initial_comment':'New subdomain discovered for '+program+': '+url+'\n - with status '+str(status)+'\n - pointing to '+str(IP)+ports_list+'\n- full aquatone results: '+aquatone_url+'/'+program+'/aquatone_report.html\n'+'```'+htext+'```\n'+results_list+nuclei_results,'channels':slack_channel}
+					data = {'initial_comment':'New subdomain discovered for '+program+': '+url+'\n - with status '+str(status)+'\n - pointing to '+str(IP)+ports_list+'\n- full aquatone results: '+aquatone_url+'/'+program+'/aquatone_report.html\n'+'```'+htext+'```\n'+results_list,'channels':slack_channel}
 				except Exception as e:
 					print(e)
 				headers = {'Authorization':'Bearer '+slack_oauth_token}
@@ -556,6 +553,21 @@ def toSlack(program):
 						r = requests.post(slack_api+'files.upload', data, headers=headers, files={"file": (aquatone_web_path+'/'+program+'/'+screenshotPath, open(aquatone_web_path+'/'+program+'/'+screenshotPath, "rb"), "image/png")})
 					except Exception as e:
 						print(tbad,e,tend)
+
+
+	try:
+		print('nuclei to slack var')
+		with open('./programs/'+program+'/nuclei-out-'+timestamp+'.txt', 'r') as file:
+			nuclei_results = file.read().replace('\n', '')
+	except Exception as e:
+		print(e)
+
+	headers = {'Authorization':'Bearer '+slack_oauth_token}
+	try:
+		print('nuclei to slack data')
+		r = requests.post(slack_api+'chat.postMessage', {'message':'Nuclei results for '+program+nuclei_results,'channels':slack_channel}, headers=headers,)
+	except Exception as e:
+			print(tbad,e,tend)
 
 def testSubdomain(subdomain):
 
