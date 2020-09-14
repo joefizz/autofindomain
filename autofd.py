@@ -487,13 +487,16 @@ def nuclei(program, linux):
 					hostname = 'https-'+hostname
 				hosts.add(url)
 	print(hosts)
+	with open('./programs/'+program+'/urls-'+timestamp+'.txt', 'w') as u:
+		for item in hosts:
+			u.write("%s\n" % item)
 
 	if linux == 'true':
 		print('nuclei linux')
-		os.system('cat ./programs/'+program+'/report.txt | ./nuclei/linux/nuclei -t ./nuclei/nuclei-templates/technologies/ -t ./nuclei/nuclei-templates/vulnerabilities/ -t ./nuclei/nuclei-templates/default-credentials/ -t ./nuclei/nuclei-templates/subdomain-takeover/ -t ./nuclei/nuclei-templates/cves/ -t ./nuclei/nuclei-templates/files/ -o ./programs/'+program+'/nuclei-out-'+timestamp+'.txt')
+		os.system('cat ./programs/'+program+'/urls-'+timestamp+'.txt | ./nuclei/linux/nuclei -t ./nuclei/nuclei-templates/technologies/ -t ./nuclei/nuclei-templates/vulnerabilities/ -t ./nuclei/nuclei-templates/default-credentials/ -t ./nuclei/nuclei-templates/subdomain-takeover/ -t ./nuclei/nuclei-templates/cves/ -t ./nuclei/nuclei-templates/files/ -o ./programs/'+program+'/nuclei-out-'+timestamp+'.txt')
 	else:
 		print('nuclei mac')
-		os.system('cat ./programs/'+program+'/report.txt | ./nuclei/mac/nuclei -t ./nuclei/nuclei-templates/technologies/ -t ./nuclei/nuclei-templates/vulnerabilities/ -t ./nuclei/nuclei-templates/default-credentials/ -t ./nuclei/nuclei-templates/subdomain-takeover/ -t ./nuclei/nuclei-templates/cves/ -t ./nuclei/nuclei-templates/files/ -o ./programs/'+program+'/nuclei-out-'+timestamp+'.txt')
+		os.system('cat ./programs/'+program+'/urls-'+timestamp+'.txt | ./nuclei/mac/nuclei -t ./nuclei/nuclei-templates/technologies/ -t ./nuclei/nuclei-templates/vulnerabilities/ -t ./nuclei/nuclei-templates/default-credentials/ -t ./nuclei/nuclei-templates/subdomain-takeover/ -t ./nuclei/nuclei-templates/cves/ -t ./nuclei/nuclei-templates/files/ -o ./programs/'+program+'/nuclei-out-'+timestamp+'.txt')
 
 def toSlack(program):
 	print (tgood,"Sending latest data for %s to slack"%(program),tend)
