@@ -570,7 +570,7 @@ def toSlack(program):
 		print('nuclei to slack data')
 		print('sending:')
 		print(nuclei_results)
-		r = requests.post(slack_api+'chat.postMessage', {'text':'Nuclei results for ','channel':slack_channel}, headers=headers,)
+		r = requests.post(slack_api+'chat.postMessage', {'text':'Nuclei results for '+program,'channel':slack_channel}, headers=headers,)
 	except Exception as e:
 			print(tbad,e,tend)
 
