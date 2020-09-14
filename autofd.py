@@ -568,7 +568,7 @@ def toSlack(program):
 	headers = {'Authorization':'Bearer '+slack_oauth_token}
 	try:
 		print('nuclei to slack data')
-		r = requests.post(slack_api+'chat.postMessage', {'message':'Nuclei results for '+program+nuclei_results,'channels':slack_channel}, headers=headers,)
+		r = requests.post(slack_api+'chat.postMessage', {'text':'Nuclei results for '+program+nuclei_results,'channel':slack_channel}, headers=headers,)
 	except Exception as e:
 			print(tbad,e,tend)
 
