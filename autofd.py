@@ -490,13 +490,13 @@ def nuclei(program, linux):
 	with open('./programs/'+program+'/urls-'+timestamp+'.txt', 'w') as u:
 		for item in hosts:
 			u.write("%s\n" % item)
-
+	nuclei_args = '-update-directory ./nuclei/nuclei-templates -silent -t technologies/ -t vulnerabilities/ -t default-credentials/ -t subdomain-takeover/ -t cves/ -t files/ -t security-misconfigurations/ -t tokens/ -t dns/ -t generic-detection/ -t vulnerabilities/ -t workflows/'
 	if linux == 'true':
 		print('nuclei linux')
-		os.system('cat ./programs/'+program+'/urls-'+timestamp+'.txt | ./nuclei/linux/nuclei -update-directory ./nuclei/nuclei-templates -silent -t technologies/ -t vulnerabilities/ -t default-credentials/ -t subdomain-takeover/ -t cves/ -t files/ -t security-misconfigurations/ -o ./programs/'+program+'/nuclei-out-'+timestamp+'.txt')
+		os.system('cat ./programs/'+program+'/urls-'+timestamp+'.txt | ./nuclei/linux/nuclei '+nuclei_args+' -o ./programs/'+program+'/nuclei-out-'+timestamp+'.txt')
 	else:
 		print('nuclei mac')
-		os.system('cat ./programs/'+program+'/urls-'+timestamp+'.txt | ./nuclei/mac/nuclei -update-directory ./nuclei/nuclei-templates -silent -t technologies/ -t vulnerabilities/ -t default-credentials/ -t subdomain-takeover/ -t cves/ -t files/ -t security-misconfigurations/ -o ./programs/'+program+'/nuclei-out-'+timestamp+'.txt')
+		os.system('cat ./programs/'+program+'/urls-'+timestamp+'.txt | ./nuclei/mac/nuclei '+nuclei_args+' -o ./programs/'+program+'/nuclei-out-'+timestamp+'.txt')
 
 def toSlack(program):
 	print (tgood,"Sending latest data for %s to slack"%(program),tend)
