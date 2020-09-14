@@ -559,7 +559,6 @@ def toSlack(program):
 
 	nuclei_results = '\n'
 	try:
-		print('nuclei to slack var')
 		with open('./programs/'+program+'/nuclei-out-'+timestamp+'.txt', 'r') as file:
 			nuclei_results += file.read()
 	except Exception as e:
@@ -567,9 +566,6 @@ def toSlack(program):
 
 	headers = {'Authorization':'Bearer '+slack_oauth_token}
 	try:
-		print('nuclei to slack data')
-		print('sending:')
-		print(nuclei_results)
 		r = requests.post(slack_api+'chat.postMessage', {'text':'Nuclei results for '+program+nuclei_results,'channel':slack_channel}, headers=headers,)
 	except Exception as e:
 			print(tbad,e,tend)
