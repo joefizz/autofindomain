@@ -561,7 +561,7 @@ def toSlack(program):
 	try:
 		print('nuclei to slack var')
 		with open('./programs/'+program+'/nuclei-out.txt', 'r') as file:
-			nuclei_results = file.read()
+			nuclei_results += file.read()
 	except Exception as e:
 		print(e)
 
