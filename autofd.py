@@ -493,10 +493,10 @@ def nuclei(program, linux):
 
 	if linux == 'true':
 		print('nuclei linux')
-		os.system('cat ./programs/'+program+'/urls-'+timestamp+'.txt | ./nuclei/linux/nuclei -v -t ./nuclei/nuclei-templates/technologies/ -t ./nuclei/nuclei-templates/vulnerabilities/ -t ./nuclei/nuclei-templates/default-credentials/ -t ./nuclei/nuclei-templates/subdomain-takeover/ -t ./nuclei/nuclei-templates/cves/ -t ./nuclei/nuclei-templates/files/ -o ./programs/'+program+'/nuclei-out-'+timestamp+'.txt')
+		os.system('cat ./programs/'+program+'/urls-'+timestamp+'.txt | ./nuclei/linux/nuclei -v -t technologies/ -t vulnerabilities/ -t default-credentials/ -t subdomain-takeover/ -t cves/ -t files/ -o ./programs/'+program+'/nuclei-out.txt')
 	else:
 		print('nuclei mac')
-		os.system('cat ./programs/'+program+'/urls-'+timestamp+'.txt | ./nuclei/mac/nuclei -v -t ./nuclei/nuclei-templates/technologies/ -t ./nuclei/nuclei-templates/vulnerabilities/ -t ./nuclei/nuclei-templates/default-credentials/ -t ./nuclei/nuclei-templates/subdomain-takeover/ -t ./nuclei/nuclei-templates/cves/ -t ./nuclei/nuclei-templates/files/ -o ./programs/'+program+'/nuclei-out-'+timestamp+'.txt')
+		os.system('cat ./programs/'+program+'/urls-'+timestamp+'.txt | ./nuclei/mac/nuclei -v -t technologies/ -t vulnerabilities/ -t default-credentials/ -t subdomain-takeover/ -t cves/ -t files/ -o ./programs/'+program+'/nuclei-out-'+timestamp+'.txt')
 
 def toSlack(program):
 	print (tgood,"Sending latest data for %s to slack"%(program),tend)
