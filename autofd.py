@@ -533,7 +533,7 @@ def nuclei(program, linux):
 	else:
 		print('nuclei mac')
 		os.system('cat ./programs/'+program+'/urls-'+timestamp+'.txt | ./nuclei/mac/nuclei '+nuclei_args+' -o ./programs/'+program+'/nuclei-out-'+timestamp+'.txt')
-	os.system('cat ./programs/'+program+'/nuclei-out-'+timestamp+'.txt > ./report_nuclei-'+timestamp+'.txt')
+	os.system('cat ./programs/'+program+'/nuclei-out-'+timestamp+'.txt >> ./report_nuclei-'+timestamp+'.txt')
 
 def toSlack(program):
 	print (tgood,"Sending latest data for %s to slack"%(program),tend)
