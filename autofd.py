@@ -798,9 +798,6 @@ def main():
 					if enable_programs_email == 'true':
 						if send_blank_emails == 'true' or new_domains > 0:
 							subReport(program)
-					if enable_combined_email == 'true':
-						if send_blank_emails == 'true' or total_subdomains > 0:
-							report()
 
 				if send_results_to_slack == 'true' and new_domains > 0 and new_program == 0 and screenshots > 0:
 					toSlack(program)
