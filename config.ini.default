@@ -6,6 +6,8 @@ password = Password123
 sender_email = email@gmail.com
 receiver_email = email@gmail.com
 email_server = smtp.gmail.com
+enable_programs_email = True
+enable_combined_email = True
 
 # if no results do you still want to send a notification email?
 send_blank_emails = False

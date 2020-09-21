@@ -165,7 +165,7 @@ def subTrack(program):
 	global new_program
 	new_domain_count = 0
 	new_domain_total = 0
-	os.system("echo > programs/"+program+"/report.txt")
+	os.system("echo "+program+"> programs/"+program+"/report.txt")
 	f = open("programs/" + program + "/domains.txt")
 	for domain in f:
 		domain = domain.rstrip('\n')
@@ -194,6 +194,7 @@ def subTrack(program):
 		except Exception as e:
 			print(e)
 	os.system("cat programs/"+program+"/*_new-"+timestamp+".txt >> programs/"+program+"/report.txt")
+	os.system("cat programs/"+program+"/report.txt > ./report_subdomains-"+timestamp+".txt")
 	end = datetime.now()
 	runtime = end-start
 	print(tgood, str(end)+' - tracking completed - runtime: '+str(runtime), tend)
@@ -443,6 +444,39 @@ def subReport(program):
 		except Exception as e:
 			print(e)
 
+def report():
+	print(tnormal,"--- sending combined subdomain report email to " + receiver_email,tend)
+	fp = open("./report_subdomains-"+timestamp+".txt", "r")
+	mail_content = fp.read()
+	msg = MIMEMultipart()
+	msg['Subject'] = "findomain combined subdomain report"
+	msg['From'] = sender_email
+	msg['To'] = receiver_email
+	msg.attach(MIMEText(mail_content, 'plain'))
+	context = ssl.create_default_context()
+	with smtplib.SMTP_SSL(email_server, port, context=context) as server:
+		server.login(sender_email, password)
+		try:
+			server.sendmail(sender_email, receiver_email.split(','), msg.as_string())
+		except Exception as e:
+			print(e)
+
+	print(tnormal,"--- sending combined nuclei report email to " + receiver_email,tend)
+	fp = open("./report_nuclei-"+timestamp+".txt", "r")
+	mail_content = fp.read()
+	msg = MIMEMultipart()
+	msg['Subject'] = "findomain combined nuclei report"
+	msg['From'] = sender_email
+	msg['To'] = receiver_email
+	msg.attach(MIMEText(mail_content, 'plain'))
+	context = ssl.create_default_context()
+	with smtplib.SMTP_SSL(email_server, port, context=context) as server:
+		server.login(sender_email, password)
+		try:
+			server.sendmail(sender_email, receiver_email.split(','), msg.as_string())
+		except Exception as e:
+			print(e)
+
 def dirsearch(program, linux):
 	print (tgood,"Beginning directory search for new subdomains in %s"%(program),tend)
 	linux = linux
@@ -497,7 +531,7 @@ def nuclei(program, linux):
 	else:
 		print('nuclei mac')
 		os.system('cat ./programs/'+program+'/urls-'+timestamp+'.txt | ./nuclei/mac/nuclei '+nuclei_args+' -o ./programs/'+program+'/nuclei-out-'+timestamp+'.txt')
-
+	os.system('cat ./programs/'+program+'/nuclei-out-'+timestamp+'.txt > ./report_nuclei-'+timestamp+'.txt')
 def toSlack(program):
 	print (tgood,"Sending latest data for %s to slack"%(program),tend)
 	slack_api = 'https://slack.com/api/'
@@ -633,6 +667,12 @@ def ctrlc(sig, frame):
 	signal.signal(signal.SIGINT, ctrlc)
 
 def fin(status):
+	flist = glob.glob('./report*')
+	for f in flist:
+		try:
+			os.remove(f)
+		except:
+			print(tbad, "Error while deleting file : ", f, tend)
 	total_runtime = datetime.now()-now
 	print(tgood,'\n---- autoFD complete.  Total running time: '+str(total_runtime)+'\n')
 	os.remove('/tmp/autofd.pid')
