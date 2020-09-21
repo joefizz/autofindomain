@@ -807,7 +807,12 @@ def main():
 				folder_clean(program)
 				
 				new_program = 0
+
 			print(tgood,'--- Total new subdomains discovered during enumeration: '+str(total_subdomains))
+			if enable_email == 'true':
+				if enable_combined_email == 'true':
+					if send_blank_emails == 'true' or total_subdomains > 0:
+						report()
 
 
 		elif (sys.argv[1]).lower() == "program":
@@ -853,7 +858,7 @@ def main():
 					if send_blank_emails == 'true' or new_domains > 0:
 						subReport(program)
 				if enable_combined_email == 'true':
-					if send_blank_emails == 'true' or total_subdomains > 0:
+					if send_blank_emails == 'true' or new_domains > 0:
 						report()
 			if send_results_to_slack == 'true' and new_domains > 0 and new_program == 0 and screenshots > 0:
 				toSlack(program)
