@@ -195,7 +195,8 @@ def subTrack(program):
 		except Exception as e:
 			print(e)
 	os.system("cat programs/"+program+"/*_new-"+timestamp+".txt >> programs/"+program+"/report.txt")
-	os.system("cat programs/"+program+"/report.txt > ./report_subdomains-"+timestamp+".txt")
+	if new_domain_count > 0:
+		 os.system("cat programs/"+program+"/report.txt >> ./report_subdomains-"+timestamp+".txt")
 	end = datetime.now()
 	runtime = end-start
 	print(tgood, str(end)+' - tracking completed - runtime: '+str(runtime), tend)
@@ -533,7 +534,14 @@ def nuclei(program, linux):
 	else:
 		print('nuclei mac')
 		os.system('cat ./programs/'+program+'/urls-'+timestamp+'.txt | ./nuclei/mac/nuclei '+nuclei_args+' -o ./programs/'+program+'/nuclei-out-'+timestamp+'.txt')
-	os.system('cat ./programs/'+program+'/nuclei-out-'+timestamp+'.txt >> ./report_nuclei-'+timestamp+'.txt')
+	file = open('./programs/'+program+'/nuclei-out-'+timestamp+'.txt', 'r')
+	lines = 0
+	for line in file:
+		line = line.strip('\n')
+		lines+=1
+	file.close()
+	if lines > 0:
+		os.system('cat ./programs/'+program+'/nuclei-out-'+timestamp+'.txt >> ./report_nuclei-'+timestamp+'.txt')
 
 def toSlack(program):
 	print (tgood,"Sending latest data for %s to slack"%(program),tend)
