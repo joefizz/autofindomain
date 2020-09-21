@@ -21,8 +21,7 @@ banner = """
                         |:  |   |:  1    /
     by joefizz          |::.|   |::.. . / 
                         `---'   `------'  
-                                          
-"""
+                                          """
 print(banner)
 
 if os.path.isfile('config.ini') == False:
@@ -535,6 +534,7 @@ def nuclei(program, linux):
 		print('nuclei mac')
 		os.system('cat ./programs/'+program+'/urls-'+timestamp+'.txt | ./nuclei/mac/nuclei '+nuclei_args+' -o ./programs/'+program+'/nuclei-out-'+timestamp+'.txt')
 	os.system('cat ./programs/'+program+'/nuclei-out-'+timestamp+'.txt > ./report_nuclei-'+timestamp+'.txt')
+
 def toSlack(program):
 	print (tgood,"Sending latest data for %s to slack"%(program),tend)
 	slack_api = 'https://slack.com/api/'
@@ -650,7 +650,6 @@ def folder_clean(program):
 			os.remove(f)
 		except:
 			print(tbad, "Error while deleting file : ", f, tend)
-
 			
 def ctrlc(sig, frame):
 	c = input('Ctrl-c detected, would you like to (e)nd or (c)ontinue?').lower()
