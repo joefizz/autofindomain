@@ -43,6 +43,8 @@ receiver_email = parser['email']['receiver_email']
 email_server = parser['email']['email_server']
 send_blank_emails = parser['email']['send_blank_emails'].lower()
 send_attachments = parser['email']['send_attachments'].lower()
+enable_programs_email = parser['email']['enable_programs_email'].lower()
+enable_combined_email = parser['email']['enable_combined_email'].lower()
 
 # local file settings
 programs = parser['files']['programs']
@@ -793,8 +795,12 @@ def main():
 								nuclei(program, linux)
 
 				if enable_email == 'true':
-					if send_blank_emails == 'true' or new_domains > 0:
-						subReport(program)
+					if enable_programs_email == 'true':
+						if send_blank_emails == 'true' or new_domains > 0:
+							subReport(program)
+					if enable_combined_email == 'true':
+						if send_blank_emails == 'true' or total_subdomains > 0:
+							report()
 
 				if send_results_to_slack == 'true' and new_domains > 0 and new_program == 0 and screenshots > 0:
 					toSlack(program)
