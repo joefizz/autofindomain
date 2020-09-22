@@ -543,8 +543,8 @@ def nuclei(program, linux):
 		print(e)
 	else:
 		for line in file:
-		line = line.strip('\n')
-		lines+=1
+			line = line.strip('\n')
+			lines+=1
 		file.close()
 	if lines > 0:
 		os.system('cat ./programs/'+program+'/nuclei-out-'+timestamp+'.txt >> ./report_nuclei-'+timestamp+'.txt')
