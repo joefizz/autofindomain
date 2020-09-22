@@ -647,10 +647,6 @@ def testSubdomain(subdomain):
 	else:
 		print(tbad,'Received IP resolution for %s pointing to %s. %s likely wildcard response'%(testdomain,ip,subdomain),tend)
 		return False
-	
-
-	
-	return result
 
 def get_random_string(length):
     letters = string.ascii_lowercase
