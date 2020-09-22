@@ -527,21 +527,28 @@ def nuclei(program, linux):
 	with open('./programs/'+program+'/urls-'+timestamp+'.txt', 'w') as u:
 		for item in hosts:
 			u.write("%s\n" % item)
-	nuclei_args = '-update-directory ./nuclei/nuclei-templates -silent -t technologies/ -t vulnerabilities/ -t default-credentials/ -t subdomain-takeover/ -t cves/ -t files/ -t security-misconfigurations/ -t tokens/ -t dns/ -t generic-detection/ -t vulnerabilities/ -t workflows/'
+	nuclei_args = ' -silent -t technologies/ -t vulnerabilities/ -t default-credentials/ -t subdomain-takeover/ -t cves/ -t files/ -t security-misconfigurations/ -t tokens/ -t dns/ -t generic-detection/ -t vulnerabilities/ -t workflows/'
 	if linux == 'true':
 		print('nuclei linux')
+		os.system('./nuclei/linux/nuclei -update-directory ./nuclei/ -update-templates')
 		os.system('cat ./programs/'+program+'/urls-'+timestamp+'.txt | ./nuclei/linux/nuclei '+nuclei_args+' -o ./programs/'+program+'/nuclei-out-'+timestamp+'.txt')
 	else:
 		print('nuclei mac')
+		os.system('./nuclei/mac/nuclei -update-directory ./nuclei/ -update-templates')
 		os.system('cat ./programs/'+program+'/urls-'+timestamp+'.txt | ./nuclei/mac/nuclei '+nuclei_args+' -o ./programs/'+program+'/nuclei-out-'+timestamp+'.txt')
-	file = open('./programs/'+program+'/nuclei-out-'+timestamp+'.txt', 'r')
 	lines = 0
-	for line in file:
+	try:
+		file = open('./programs/'+program+'/nuclei-out-'+timestamp+'.txt', 'r')
+	except Exception as e:
+		print(e)
+	else:
+		for line in file:
 		line = line.strip('\n')
 		lines+=1
-	file.close()
+		file.close()
 	if lines > 0:
 		os.system('cat ./programs/'+program+'/nuclei-out-'+timestamp+'.txt >> ./report_nuclei-'+timestamp+'.txt')
+		lines = 0
 
 def toSlack(program):
 	print (tgood,"Sending latest data for %s to slack"%(program),tend)
