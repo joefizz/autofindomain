@@ -546,7 +546,7 @@ def nuclei(program, linux):
 			line = line.strip('\n')
 			lines+=1
 		file.close()
-	if lines > 0:
+	if lines > 1:
 		os.system('cat ./programs/'+program+'/nuclei-out-'+timestamp+'.txt >> ./report_nuclei-'+timestamp+'.txt')
 		lines = 0
 
