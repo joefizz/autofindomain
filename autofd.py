@@ -514,7 +514,7 @@ def nuclei(program, linux):
 	data = json.load(f)
 	f.close()
 	hosts = set()
-	os.system('echo '+program+' > ./report_nuclei-'+timestamp+'.txt')
+	os.system('echo '+program+' >> ./report_nuclei-'+timestamp+'.txt')
 	for (k,v) in data.items():
 		if k == 'pages':
 			for key in v:
