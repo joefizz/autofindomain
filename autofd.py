@@ -129,7 +129,7 @@ def subEnumerate(program):
 			print(tnormal,'--- Searching subdomains of %s'%(domain),tend)
 
 		try:
-			os.system("./links/amass enum -config ./amass_config.ini -d "+domain+" --silent -o out.txt")
+			os.system("./links/amass enum -config ./amass_config.ini -d "+domain+" -o out.txt")
 		except Exception as e:
 			print(e)
 
