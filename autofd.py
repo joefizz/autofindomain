@@ -690,7 +690,7 @@ def bins(linux):
 
 def sources():
 	with urllib.request.urlopen("https://public-dns.info/nameserver/gb.json") as url:
-	data = json.loads(url.read().decode())
+		data = json.loads(url.read().decode())
 	sources = ""
 	for source in data:
 		if source["reliability"] > 0.99:
