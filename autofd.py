@@ -129,7 +129,7 @@ def subEnumerate(program):
 			print(tnormal,'--- Searching subdomains of %s'%(domain),tend)
 
 		try:
-			os.system("./links/amass enum -config ./amass_config.ini -d"+domain+" --silent -o out.txt")
+			os.system("./links/amass enum -config ./amass_config.ini -d "+domain+" --silent -o out.txt")
 		except Exception as e:
 			print(e)
 
@@ -756,7 +756,7 @@ def main():
 			print(tnormal,"--- Downloading latest version of findomain",tend)
 			if os.path.isfile("./findomain"):
 				os.system("rm -f ./findomain")
-			os.system("wget https://github.com/Edu4rdSHL/findomain/releases/latest/download/findomain-linux -q --show-progress; mv finddomain-linux findomain; chmod +x findomain-linux")
+			os.system("wget https://github.com/Edu4rdSHL/findomain/releases/latest/download/findomain-linux -q --show-progress; mv findomain-linux findomain; chmod +x findomain-linux")
 		p = open(programs)
 
 		if (sys.argv[1]).lower() == "enum":
