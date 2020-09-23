@@ -468,7 +468,6 @@ def report():
 
 def dirsearch(program):
 	print (tgood,"Beginning directory search for new subdomains in %s"%(program),tend)
-	linux = linux
 	f = open('./programs/'+program+'/aquatone_session.json')
 	data = json.load(f)
 	f.close()
@@ -483,16 +482,10 @@ def dirsearch(program):
 					hostname = 'https-'+hostname
 				print (tgood,"--- Beginning directory search on %s"%(url),tend)
 
-				if linux == 'true':
-					try:
-						os.system('./links/ffuf -maxtime 120 -s -o ./programs/'+program+'/'+hostname+'-ffuf_out-'+timestamp+'.json -timeout 5 -u '+ fuzzname+ ' -w ./ffuf/dict.txt -D -e php,txt,html -ic -ac -fc 403')
-					except OSError as e:
-						print (e.output)
-				else:
-					try:
-						os.system('./links/ffuf -maxtime 120 -s -o ./programs/'+program+'/'+hostname+'-ffuf_out-'+timestamp+'.json -timeout 5 -u '+ fuzzname+ ' -w ./ffuf/dict.txt -D -e php,txt,html -ic -ac -fc 403')
-					except OSError as e:
-						print (e.output)				
+				try:
+					os.system('./links/ffuf -maxtime 120 -s -o ./programs/'+program+'/'+hostname+'-ffuf_out-'+timestamp+'.json -timeout 5 -u '+ fuzzname+ ' -w ./ffuf/dict.txt -D -e php,txt,html -ic -ac -fc 403')
+				except OSError as e:
+					print (e.output)
 
 def nuclei(program):
 	print (tgood,"Beginning nuclei scan for new subdomains in %s"%(program),tend)
