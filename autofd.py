@@ -101,10 +101,9 @@ print(tnormal,"Timestamp: "+timestamp,tend)
 # variable to record if current program is new (1 for mew, 0 for old)
 new_program = 0
 
-def subEnumerate(program, linux):
+def subEnumerate(program):
 	start = datetime.now()
 	print(tnormal, str(start) + " - Beginning subdomain search of domains in " + program , tend)
-	linux = linux
 	f = open("programs/" + program + "/domains.txt")
 	for domain in f:
 		domain = domain.rstrip('\n')
@@ -128,24 +127,13 @@ def subEnumerate(program, linux):
 			t.start()
 		else:
 			print(tnormal,'--- Searching subdomains of %s'%(domain),tend)
-		if linux == "true":
-			try:
-				os.system("./findomain-linux -q -t "+domain+" -u out.txt > /dev/null")
-			except Exception as e:
-				print(e)
-			try:
-				os.system('./subfinder_linux/subfinder -config ./subfinder_config.yaml -d '+domain+' -max-time 1 -nW -o subout.txt -silent > /dev/null')
-			except Exception as e:
-				print(e)
-		if not linux == "true":
-			try:
-				os.system("findomain -q -t "+domain+" -u out.txt > /dev/null")
-			except Exception as e:
-				print(e)
-			try:
-				os.system('./subfinder_mac/subfinder -config ./subfinder_config.yaml -d '+domain+' -max-time 1 -nW -o subout.txt -silent > /dev/null')
-			except Exception as e:
-				print(e)
+
+		try:
+			os.system("./links/amass -config ./amass_config.ini -d"+domain+" --silent -o out.txt")
+		except Exception as e:
+			print(e)
+
+
 
 		try:
 			os.system('cat ./subout.txt >> ./out.txt')
@@ -507,8 +495,7 @@ def dirsearch(program, linux):
 					except OSError as e:
 						print (e.output)				
 
-def nuclei(program, linux):
-	linux = linux
+def nuclei(program):
 	print (tgood,"Beginning nuclei scan for new subdomains in %s"%(program),tend)
 	f = open('./programs/'+program+'/aquatone_session.json')
 	data = json.load(f)
@@ -528,14 +515,9 @@ def nuclei(program, linux):
 		for item in hosts:
 			u.write("%s\n" % item)
 	nuclei_args = ' -silent -t technologies/ -t vulnerabilities/ -t default-credentials/ -t subdomain-takeover/ -t cves/ -t files/ -t security-misconfigurations/ -t tokens/ -t dns/ -t generic-detection/ -t vulnerabilities/ -t workflows/'
-	if linux == 'true':
-		print('nuclei linux')
-		os.system('./nuclei/linux/nuclei -update-directory ./nuclei/ -update-templates')
-		os.system('cat ./programs/'+program+'/urls-'+timestamp+'.txt | ./nuclei/linux/nuclei '+nuclei_args+' -o ./programs/'+program+'/nuclei-out-'+timestamp+'.txt')
-	else:
-		print('nuclei mac')
-		os.system('./nuclei/mac/nuclei -update-directory ./nuclei/ -update-templates')
-		os.system('cat ./programs/'+program+'/urls-'+timestamp+'.txt | ./nuclei/mac/nuclei '+nuclei_args+' -o ./programs/'+program+'/nuclei-out-'+timestamp+'.txt')
+	os.system('./links/nuclei -update-directory ./nuclei/ -update-templates')
+	os.system('cat ./programs/'+program+'/urls-'+timestamp+'.txt | ./links/nuclei '+nuclei_args+' -o ./programs/'+program+'/nuclei-out-'+timestamp+'.txt')
+
 	lines = 0
 	try:
 		file = open('./programs/'+program+'/nuclei-out-'+timestamp+'.txt', 'r')
@@ -692,6 +674,21 @@ def fin(status):
 
 	sys.exit(status)
 
+def bins(linux):
+	linux == 'true'
+	if linux:
+		os.system('ln -s ./amass/linux/amass ./links/amass')
+		os.system('ln -s ./ffuf/linux/ffuf ./links/ffuf')
+		os.system('ln -s ./amass/linux/amass ./links/amass')
+		os.system('ln -s ./nuclei/linux/amass ./links/nuclei')
+		os.system('ln -s ./subfinder/linux/amass ./links/subfinder')
+	else:
+		os.system('ln -s ./amass/mac/amass ./links/amass')
+		os.system('ln -s ./ffuf/mac/ffuf ./links/ffuf')
+		os.system('ln -s ./amass/mac/amass ./links/amass')
+		os.system('ln -s ./nuclei/mac/amass ./links/nuclei')
+		os.system('ln -s ./subfinder/mac/amass ./links/subfinder')
+
 def main():
 
 	global new_program
@@ -744,6 +741,8 @@ def main():
 	if len(sys.argv) < 2:
 		print(tgood+"autofd usage\n\n./autofd.py <option>\n\nOptions: enum, add, del, list, email, purge\n",tend)
 		fin(1)
+
+	bins(linux)
 
 	if (sys.argv[1]).lower() == "enum" or (sys.argv[1]).lower() == "program":
 		
