@@ -468,7 +468,7 @@ def report():
 		except Exception as e:
 			print(e)
 
-def dirsearch(program, linux):
+def dirsearch(program):
 	print (tgood,"Beginning directory search for new subdomains in %s"%(program),tend)
 	linux = linux
 	f = open('./programs/'+program+'/aquatone_session.json')
@@ -695,7 +695,6 @@ def sources():
 	for source in data:
 		if source["reliability"] > 0.99:
 			sources += source["ip"]+'\n'
-	print(sources)
 	f = open("./dns_resolvers.txt", "w")
 	f.writelines(sources)
 	f.close()
