@@ -694,7 +694,7 @@ def sources():
 	sources = ""
 	for source in data:
 		if source["reliability"] > 0.99:
-			sources += source["ip"+'\n']
+			sources += source["ip"]+'\n'
 	print(sources)
 	f = open("./dns_resolvers.txt", "w")
 	f.writelines(sources)
