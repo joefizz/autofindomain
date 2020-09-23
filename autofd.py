@@ -104,6 +104,7 @@ new_program = 0
 def subEnumerate(program):
 	start = datetime.now()
 	print(tnormal, str(start) + " - Beginning subdomain search of domains in " + program , tend)
+	sources()
 	f = open("programs/" + program + "/domains.txt")
 	for domain in f:
 		domain = domain.rstrip('\n')
@@ -129,7 +130,7 @@ def subEnumerate(program):
 			print(tnormal,'--- Searching subdomains of %s'%(domain),tend)
 
 		try:
-			os.system("./links/amass enum -config ./amass_config.ini -d "+domain+" -o out.txt")
+			os.system("./links/amass enum -config ./amass_config.ini -d "+domain+" -o out.txt -min-for-recursive 2 -rf ./dns_resolvers.txt")
 		except Exception as e:
 			print(e)
 
@@ -686,6 +687,18 @@ def bins(linux):
 		os.system('ln -s `pwd`/ffuf/mac/ffuf ./links/ffuf')
 		os.system('ln -s `pwd`/nuclei/mac/nuclei ./links/nuclei')
 		os.system('ln -s `pwd`/subfinder/mac/subfinder ./links/subfinder')
+
+def sources():
+	with urllib.request.urlopen("https://public-dns.info/nameserver/gb.json") as url:
+    data = json.loads(url.read().decode())
+    sources = ""
+	for source in data:
+		if source["reliability"] > 0.99:
+			sources += source["ip"]
+	print(sources)
+	f = open("./dns_resolvers.txt", "w")
+	f.writelines(sources)
+	f.close()
 
 def main():
 
