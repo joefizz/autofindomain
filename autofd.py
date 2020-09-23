@@ -486,12 +486,12 @@ def dirsearch(program, linux):
 
 				if linux == 'true':
 					try:
-						os.system('./ffuf/linux/ffuf -maxtime 120 -s -o ./programs/'+program+'/'+hostname+'-ffuf_out-'+timestamp+'.json -timeout 5 -u '+ fuzzname+ ' -w ./ffuf/dict.txt -D -e php,txt,html -ic -ac -fc 403')
+						os.system('./links/ffuf -maxtime 120 -s -o ./programs/'+program+'/'+hostname+'-ffuf_out-'+timestamp+'.json -timeout 5 -u '+ fuzzname+ ' -w ./ffuf/dict.txt -D -e php,txt,html -ic -ac -fc 403')
 					except OSError as e:
 						print (e.output)
 				else:
 					try:
-						os.system('./ffuf/mac/ffuf -maxtime 120 -s -o ./programs/'+program+'/'+hostname+'-ffuf_out-'+timestamp+'.json -timeout 5 -u '+ fuzzname+ ' -w ./ffuf/dict.txt -D -e php,txt,html -ic -ac -fc 403')
+						os.system('./links/ffuf -maxtime 120 -s -o ./programs/'+program+'/'+hostname+'-ffuf_out-'+timestamp+'.json -timeout 5 -u '+ fuzzname+ ' -w ./ffuf/dict.txt -D -e php,txt,html -ic -ac -fc 403')
 					except OSError as e:
 						print (e.output)				
 
@@ -675,8 +675,8 @@ def fin(status):
 	sys.exit(status)
 
 def bins(linux):
-	linux == 'true'
-	if linux:
+	linux == linux
+	if linux == 'true':
 		os.system('ln -s ./amass/linux/amass ./links/amass')
 		os.system('ln -s ./ffuf/linux/ffuf ./links/ffuf')
 		os.system('ln -s ./amass/linux/amass ./links/amass')
@@ -756,9 +756,9 @@ def main():
 			fin(1)
 		if linux == "true":
 			print(tnormal,"--- Downloading latest version of findomain",tend)
-			if os.path.isfile("./findomain-linux"):
-				os.system("rm -f ./findomain-linux")
-			os.system("wget https://github.com/Edu4rdSHL/findomain/releases/latest/download/findomain-linux -q --show-progress; chmod +x findomain-linux")
+			if os.path.isfile("./findomain"):
+				os.system("rm -f ./findomain")
+			os.system("wget https://github.com/Edu4rdSHL/findomain/releases/latest/download/findomain-linux -q --show-progress; mv finddomain-linux findomain; chmod +x findomain-linux")
 		p = open(programs)
 
 		if (sys.argv[1]).lower() == "enum":
@@ -784,7 +784,7 @@ def main():
 				if sum(1 for line in open('./programs/'+program+'/domains.txt')) < 1:
 					print(tbad, '*** Program %s does not have any domains.  Add them to domains.txt or use:\n\n    ./autofd.py add-domain <program> <domain>'%(program),tend)
 					continue
-				subEnumerate(program,linux)
+				subEnumerate(program)
 				new_domains = subTrack(program)
 				print("--- New subdomains: "+str(new_domains))
 				total_subdomains += new_domains
@@ -799,10 +799,10 @@ def main():
 							screenshots = subAquatone(program)
 						if ffuf_on == 'true':
 							if new_program == 0 or ffuf_on_new == 'true':
-								dirsearch(program, linux)
+								dirsearch(program)
 						if nuclei_on == 'true':
 							if new_program == 0 or nuclei_on_new == 'true':
-								nuclei(program, linux)
+								nuclei(program)
 
 				if enable_email == 'true':
 					if enable_programs_email == 'true':
@@ -841,7 +841,7 @@ def main():
 			if sum(1 for line in open('./programs/'+program+'/domains.txt')) < 1:
 					print(tbad, '*** Program %s does not have any domains.  Add them to domains.txt or use:\n\n    ./autofd.py add-domain <program> <domain>'%(program),tend)
 					fin(1)
-			subEnumerate(program,linux)
+			subEnumerate(program)
 			new_domains = subTrack(program)
 			print("--- send_blank_emails: "+send_blank_emails)
 			print("--- new_domains: "+str(new_domains))
@@ -856,10 +856,10 @@ def main():
 						screenshots = subAquatone(program)
 					if ffuf_on == 'true':
 						if new_program == 0 or ffuf_on_new == 'true':
-							dirsearch(program, linux)
+							dirsearch(program)
 					if nuclei_on == 'true':
 							if new_program == 0 or nuclei_on_new == 'true':
-								nuclei(program, linux)
+								nuclei(program)
 			if enable_email == 'true':
 				if enable_programs_email == 'true':
 					if send_blank_emails == 'true' or new_domains > 0:
