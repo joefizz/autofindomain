@@ -759,7 +759,7 @@ def main():
 			print(tnormal,"--- Downloading latest version of findomain",tend)
 			if os.path.isfile("./findomain"):
 				os.system("rm -f ./findomain")
-			os.system("wget https://github.com/Edu4rdSHL/findomain/releases/latest/download/findomain-linux -q --show-progress; mv findomain-linux findomain; chmod +x findomain-linux")
+			os.system("wget https://github.com/Edu4rdSHL/findomain/releases/latest/download/findomain-linux -q --show-progress; mv findomain-linux findomain; chmod +x findomain")
 		p = open(programs)
 
 		if (sys.argv[1]).lower() == "enum":
