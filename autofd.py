@@ -129,7 +129,7 @@ def subEnumerate(program):
 			print(tnormal,'--- Searching subdomains of %s'%(domain),tend)
 
 		try:
-			os.system("./links/amass -config ./amass_config.ini -d"+domain+" --silent -o out.txt")
+			os.system("./links/amass enum -config ./amass_config.ini -d"+domain+" --silent -o out.txt")
 		except Exception as e:
 			print(e)
 
@@ -679,15 +679,13 @@ def bins(linux):
 	if linux == 'true':
 		os.system('ln -s `pwd`/amass/linux/amass ./links/amass')
 		os.system('ln -s `pwd`/ffuf/linux/ffuf ./links/ffuf')
-		os.system('ln -s `pwd`/amass/linux/amass ./links/amass')
-		os.system('ln -s `pwd`/nuclei/linux/amass ./links/nuclei')
-		os.system('ln -s `pwd`/subfinder/linux/amass ./links/subfinder')
+		os.system('ln -s `pwd`/nuclei/linux/nuclei ./links/nuclei')
+		os.system('ln -s `pwd`/subfinder/linux/subfinder ./links/subfinder')
 	else:
 		os.system('ln -s `pwd`/amass/mac/amass ./links/amass')
 		os.system('ln -s `pwd`/ffuf/mac/ffuf ./links/ffuf')
-		os.system('ln -s `pwd`/amass/mac/amass ./links/amass')
-		os.system('ln -s `pwd`/nuclei/mac/amass ./links/nuclei')
-		os.system('ln -s `pwd`/subfinder/mac/amass ./links/subfinder')
+		os.system('ln -s `pwd`/nuclei/mac/nuclei ./links/nuclei')
+		os.system('ln -s `pwd`/subfinder/mac/subfinder ./links/subfinder')
 
 def main():
 
