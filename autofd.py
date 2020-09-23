@@ -137,10 +137,8 @@ def subEnumerate(program):
 
 
 		try:
-			os.system('cat ./subout.txt >> ./out.txt')
 			os.system("sort -u out.txt > "+path+"_latest-"+timestamp+".txt")
 			os.system("rm out.txt")
-			os.system("rm subout.txt")
 		except Exception as e:
 			print(e)
 		done = True
@@ -854,7 +852,7 @@ def main():
 			subEnumerate(program)
 			new_domains = subTrack(program)
 			print("--- send_blank_emails: "+send_blank_emails)
-			print("--- new_domains: "+str(new_domains))
+			print("--- new_subdomains: "+str(new_domains))
 			port_count = 0
 			if nmap_on == 'true' and new_domains > 0:
 				print('*** new_program = '+str(new_program))
