@@ -677,17 +677,17 @@ def fin(status):
 def bins(linux):
 	linux == linux
 	if linux == 'true':
-		os.system('ln -s ./amass/linux/amass ./links/amass')
-		os.system('ln -s ./ffuf/linux/ffuf ./links/ffuf')
-		os.system('ln -s ./amass/linux/amass ./links/amass')
-		os.system('ln -s ./nuclei/linux/amass ./links/nuclei')
-		os.system('ln -s ./subfinder/linux/amass ./links/subfinder')
+		os.system('ln -s `pwd`/amass/linux/amass ./links/amass')
+		os.system('ln -s `pwd`/ffuf/linux/ffuf ./links/ffuf')
+		os.system('ln -s `pwd`/amass/linux/amass ./links/amass')
+		os.system('ln -s `pwd`/nuclei/linux/amass ./links/nuclei')
+		os.system('ln -s `pwd`/subfinder/linux/amass ./links/subfinder')
 	else:
-		os.system('ln -s ./amass/mac/amass ./links/amass')
-		os.system('ln -s ./ffuf/mac/ffuf ./links/ffuf')
-		os.system('ln -s ./amass/mac/amass ./links/amass')
-		os.system('ln -s ./nuclei/mac/amass ./links/nuclei')
-		os.system('ln -s ./subfinder/mac/amass ./links/subfinder')
+		os.system('ln -s `pwd`/amass/mac/amass ./links/amass')
+		os.system('ln -s `pwd`/ffuf/mac/ffuf ./links/ffuf')
+		os.system('ln -s `pwd`/amass/mac/amass ./links/amass')
+		os.system('ln -s `pwd`/nuclei/mac/amass ./links/nuclei')
+		os.system('ln -s `pwd`/subfinder/mac/amass ./links/subfinder')
 
 def main():
 
