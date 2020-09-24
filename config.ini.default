@@ -6,7 +6,11 @@ password = Password123
 sender_email = email@gmail.com
 receiver_email = email@gmail.com
 email_server = smtp.gmail.com
-enable_programs_email = True
+
+# enabling this will send a separate email for each program, along with all attachments (nmap scans, subdmomains, etc.)
+enable_programs_email = False
+
+# enabling this will send condensed emails at the end of everyt run.  At the moment it is one email for subdomains and one for nuclei results
 enable_combined_email = True
 
 # if no results do you still want to send a notification email?
