@@ -130,7 +130,7 @@ def subEnumerate(program):
 			print(tnormal,'--- Searching subdomains of %s'%(domain),tend)
 
 		try:
-			os.system('./links/amass enum -config ./amass_config.ini -ef /opt/autofindomain/amass/source_exclude.txt -exclude "Brute Forcing" -w /opt/autofindomain/amass/dns.txt -d '+domain+' -noalts -o out.txt -min-for-recursive 2 -rf ./dns_resolvers.txt')
+			os.system('./links/amass enum -config ./amass_config.ini -nolocaldb -ef /opt/autofindomain/amass/source_exclude.txt -exclude "Brute Forcing" -w /opt/autofindomain/amass/dns.txt -d '+domain+' -noalts -o out.txt -min-for-recursive 2 -rf ./dns_resolvers.txt')
 		except Exception as e:
 			print(e)
 
