@@ -6,6 +6,3 @@ LoCArchive
 PassiveTotal
 Cloudflare
 Brute Forcing
-CertSpotter
-Crtsh
-Devs
