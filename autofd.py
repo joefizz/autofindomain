@@ -437,7 +437,7 @@ def subReport(program):
 			print(e)
 
 def report():
-	if path.exists("./report_subdomains-"+timestamp+".txt"):
+	if os.path.exists("./report_subdomains-"+timestamp+".txt"):
 		print(tnormal,"--- sending combined subdomain report email to " + receiver_email,tend)
 		fp = open("./report_subdomains-"+timestamp+".txt", "r")
 		mail_content = fp.read()
@@ -454,7 +454,7 @@ def report():
 			except Exception as e:
 				print(e)
 
-	if path.exists("./report_nuclei-"+timestamp+".txt"):
+	if os.path.exists("./report_nuclei-"+timestamp+".txt"):
 		print(tnormal,"--- sending combined nuclei report email to " + receiver_email,tend)
 		fp = open("./report_nuclei-"+timestamp+".txt", "r")
 		mail_content = fp.read()
