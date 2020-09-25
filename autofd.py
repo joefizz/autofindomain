@@ -525,7 +525,7 @@ def nuclei(program):
 			lines+=1
 		file.close()
 	if lines > 1:
-		os.system('echo '+program+' >> ./programs/'+program+'/nuclei-out-'+timestamp+'.txt')
+		os.system('echo '+program+' >> ./report_nuclei-'+timestamp+'.txt')
 		os.system('cat ./programs/'+program+'/nuclei-out-'+timestamp+'.txt | sed "/^\[tech-detect/d" >> ./report_nuclei-'+timestamp+'.txt')
 		lines = 0
 
