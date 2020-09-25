@@ -244,11 +244,6 @@ def subNmap(program):
 			except OSError as e:
 				print (e.output)
 			shutil.move('programs/'+program+'/'+subdomain+'_nmap_'+timestamp+'.nmap', path+'_nmap_'+timestamp+'.txt')
-			file = open('programs/'+program+'/'+subdomain+'_nmap_'+timestamp+'.gnmap', "r")
-			for line in file:
-				line = line.lower()
-				if re.search('open', line):
-					port_count += 1
 			done = True
 
 			print(tgood,'Latest nmap results available in programs/'+program+'/'+subdomain+'_nmap_'+timestamp+'.{txt,gnmap,xml}',tend)
@@ -260,6 +255,13 @@ def subNmap(program):
 			xmlFiles.append(os.path.join(dir, f))
 	if xmlFiles:
 		xmlMerge(xmlFiles, program)
+
+	file = open('programs/'+program+'/nmap_merged_' + timestamp + '.xml', "r")
+	for line in file:
+		line = line.lower()
+		if re.search('open', line):
+			port_count += 1
+
 	end = datetime.now()
 	runtime = end-start
 
@@ -608,9 +610,6 @@ def testSubdomain(subdomain):
 			return False
 	if subdomain.count('.') == 1:
 		print('This appears to be a root domain and therefore likely not a wildcard response - %s'%(subdomain))
-		return True
-	if subdomain.count('.') == 2:
-		print('This appears to be attached to the root domain and therefore likely not a wildcard response - %s'%(subdomain))
 		return True
 	testdomain = get_random_string(12)+'.'+ subdomain.split('.',1)[1]
 	try:
