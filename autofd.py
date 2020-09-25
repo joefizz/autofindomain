@@ -437,37 +437,39 @@ def subReport(program):
 			print(e)
 
 def report():
-	print(tnormal,"--- sending combined subdomain report email to " + receiver_email,tend)
-	fp = open("./report_subdomains-"+timestamp+".txt", "r")
-	mail_content = fp.read()
-	msg = MIMEMultipart()
-	msg['Subject'] = "findomain combined subdomain report"
-	msg['From'] = sender_email
-	msg['To'] = receiver_email
-	msg.attach(MIMEText(mail_content, 'plain'))
-	context = ssl.create_default_context()
-	with smtplib.SMTP_SSL(email_server, port, context=context) as server:
-		server.login(sender_email, password)
-		try:
-			server.sendmail(sender_email, receiver_email.split(','), msg.as_string())
-		except Exception as e:
-			print(e)
+	if path.exists("./report_subdomains-"+timestamp+".txt"):
+		print(tnormal,"--- sending combined subdomain report email to " + receiver_email,tend)
+		fp = open("./report_subdomains-"+timestamp+".txt", "r")
+		mail_content = fp.read()
+		msg = MIMEMultipart()
+		msg['Subject'] = "findomain combined subdomain report"
+		msg['From'] = sender_email
+		msg['To'] = receiver_email
+		msg.attach(MIMEText(mail_content, 'plain'))
+		context = ssl.create_default_context()
+		with smtplib.SMTP_SSL(email_server, port, context=context) as server:
+			server.login(sender_email, password)
+			try:
+				server.sendmail(sender_email, receiver_email.split(','), msg.as_string())
+			except Exception as e:
+				print(e)
 
-	print(tnormal,"--- sending combined nuclei report email to " + receiver_email,tend)
-	fp = open("./report_nuclei-"+timestamp+".txt", "r")
-	mail_content = fp.read()
-	msg = MIMEMultipart()
-	msg['Subject'] = "findomain combined nuclei report"
-	msg['From'] = sender_email
-	msg['To'] = receiver_email
-	msg.attach(MIMEText(mail_content, 'plain'))
-	context = ssl.create_default_context()
-	with smtplib.SMTP_SSL(email_server, port, context=context) as server:
-		server.login(sender_email, password)
-		try:
-			server.sendmail(sender_email, receiver_email.split(','), msg.as_string())
-		except Exception as e:
-			print(e)
+	if path.exists("./report_nuclei-"+timestamp+".txt"):
+		print(tnormal,"--- sending combined nuclei report email to " + receiver_email,tend)
+		fp = open("./report_nuclei-"+timestamp+".txt", "r")
+		mail_content = fp.read()
+		msg = MIMEMultipart()
+		msg['Subject'] = "findomain combined nuclei report"
+		msg['From'] = sender_email
+		msg['To'] = receiver_email
+		msg.attach(MIMEText(mail_content, 'plain'))
+		context = ssl.create_default_context()
+		with smtplib.SMTP_SSL(email_server, port, context=context) as server:
+			server.login(sender_email, password)
+			try:
+				server.sendmail(sender_email, receiver_email.split(','), msg.as_string())
+			except Exception as e:
+				print(e)
 
 def dirsearch(program):
 	print (tgood,"Beginning directory search for new subdomains in %s"%(program),tend)
