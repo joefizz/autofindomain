@@ -511,7 +511,7 @@ def nuclei(program):
 	with open('./programs/'+program+'/urls-'+timestamp+'.txt', 'w') as u:
 		for item in hosts:
 			u.write("%s\n" % item)
-	nuclei_args = ' -silent -t vulnerabilities/ -t default-credentials/ -t subdomain-takeover/ -t cves/ -t files/ -t security-misconfigurations/ -t tokens/ -t dns/ -t generic-detection/ -t vulnerabilities/ -t workflows/'
+	nuclei_args = ' -silent -t technologies/ -t vulnerabilities/ -t default-credentials/ -t subdomain-takeover/ -t cves/ -t files/ -t security-misconfigurations/ -t tokens/ -t dns/ -t generic-detection/ -t vulnerabilities/ -t workflows/'
 	os.system('./links/nuclei -update-directory ./nuclei/ -update-templates')
 	os.system('cat ./programs/'+program+'/urls-'+timestamp+'.txt | ./links/nuclei '+nuclei_args+' -o ./programs/'+program+'/nuclei-out-'+timestamp+'.txt')
 
