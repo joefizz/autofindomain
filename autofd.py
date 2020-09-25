@@ -256,11 +256,12 @@ def subNmap(program):
 	if xmlFiles:
 		xmlMerge(xmlFiles, program)
 
-	file = open('programs/'+program+'/nmap_merged_' + timestamp + '.xml', "r")
-	for line in file:
-		line = line.lower()
-		if re.search('open', line):
-			port_count += 1
+	if newSubdomains:
+		file = open('programs/'+program+'/nmap_merged_' + timestamp + '.xml', "r")
+		for line in file:
+			line = line.lower()
+			if re.search('open', line):
+				port_count += 1
 
 	end = datetime.now()
 	runtime = end-start
