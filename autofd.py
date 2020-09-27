@@ -216,7 +216,7 @@ def subNmap(program):
 			if testSubdomain(subdomain):
 				newSubdomains.append(subdomain)
 		
-		r = open("programs/"+program+"/report.txt", "w")
+		r = open("./report_subdomains-"+timestamp+".txt", "w")
 		for subdomain in newSubdomains:
 			
 			r.write(subdomain)
