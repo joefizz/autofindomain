@@ -219,7 +219,7 @@ def subNmap(program):
 		r = open("./report_subdomains-"+timestamp+".txt", "a")
 		for subdomain in newSubdomains:
 			
-			r.write('\n'+subdomain)
+			r.write(subdomain+'\n')
 			r.close
 			nmap_args = nmap_arguments.copy()
 			done = False
