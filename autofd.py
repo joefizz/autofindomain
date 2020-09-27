@@ -137,7 +137,7 @@ def subEnumerate(program):
 
 
 		try:
-			os.system("sort -u out.txt | sed 's/%//; s/\///; s/://; s/\.//' >> "+path+"_latest-"+timestamp+".txt")
+			os.system("sort -u out.txt | sed 's/%//; s/\///; s/://' >> "+path+"_latest-"+timestamp+".txt")
 			os.system("rm out.txt")
 		except Exception as e:
 			print(e)
@@ -623,8 +623,9 @@ def testSubdomain(subdomain):
 		return True
 	try:
 		ip = socket.gethostbyname(subdomain)
-	except:
+	except Exception as e:
 		print(tbad, 'No IP resolution for %s, not worth looking at.'%(subdomain),tend)
+		return false
 	testdomain = get_random_string(12)+'.'+ subdomain.split('.',1)[1]
 	try:
 		ip = socket.gethostbyname(testdomain)
