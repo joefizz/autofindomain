@@ -880,8 +880,7 @@ def main():
 					if send_blank_emails == 'true' or new_domains > 0:
 						report()
 			if send_results_to_slack == 'true' and new_domains > 0 and new_program == 0 and screenshots > 0:
-				thread1 = threading.Thread(target = toSlack, args = (program,))
-				thread1.start()
+				toSlack(program)
 			folder_clean(program)
 
 		fin(1)
