@@ -622,7 +622,7 @@ def testSubdomain(subdomain):
 		ip = socket.gethostbyname(subdomain)
 	except Exception as e:
 		print(tbad, 'No IP resolution for %s, not worth looking at.'%(subdomain),tend)
-		return false
+		return False
 	testdomain = get_random_string(12)+'.'+ subdomain.split('.',1)[1]
 	try:
 		ip = socket.gethostbyname(testdomain)
