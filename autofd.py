@@ -216,9 +216,6 @@ def subNmap(program):
 			if testSubdomain(subdomain):
 				newSubdomains.append(subdomain)
 		
-		
-
-		os.system("cat programs/"+program+"/*_new-"+timestamp+".txt >> programs/"+program+"/report.txt")
 		r = open("programs/"+program+"/report.txt", "w")
 		for subdomain in newSubdomains:
 			
@@ -884,6 +881,7 @@ def main():
 						report()
 			if send_results_to_slack == 'true' and new_domains > 0 and new_program == 0 and screenshots > 0:
 				thread1 = threading.Thread(target = toSlack, args = (program))
+				thread1.start()
 			folder_clean(program)
 
 		fin(1)
