@@ -137,7 +137,7 @@ def subEnumerate(program):
 
 
 		try:
-			os.system("sort -u out.txt | sed 's/%//; s/\///; s/://' >> "+path+"_latest-"+timestamp+".txt")
+			os.system("sort -u out.txt | sed 's/%//; s/\/\///; s/\///; s/://' >> "+path+"_latest-"+timestamp+".txt")
 			os.system("rm out.txt")
 		except Exception as e:
 			print(e)
