@@ -181,7 +181,6 @@ def subTrack(program):
 			shutil.move(path+"_latest-"+timestamp+".txt", path+"_latest.txt")
 		except Exception as e:
 			print(e)
-	os.system("cat programs/"+program+"/*_new-"+timestamp+".txt >> programs/"+program+"/report.txt")
 	if new_domain_count > 0:
 		 os.system("cat programs/"+program+"/report.txt >> ./report_subdomains-"+timestamp+".txt")
 	end = datetime.now()
@@ -216,8 +215,15 @@ def subNmap(program):
 			subdomain=subdomain.rstrip('\n')
 			if testSubdomain(subdomain):
 				newSubdomains.append(subdomain)
+		
+		
 
+		os.system("cat programs/"+program+"/*_new-"+timestamp+".txt >> programs/"+program+"/report.txt")
+		r = open("programs/"+program+"/report.txt", "w")
 		for subdomain in newSubdomains:
+			
+			r.write(subdomain)
+			r.close
 			nmap_args = nmap_arguments.copy()
 			done = False
 			#here is the animation
@@ -247,6 +253,7 @@ def subNmap(program):
 			done = True
 
 			print(tgood,'Latest nmap results available in programs/'+program+'/'+subdomain+'_nmap_'+timestamp+'.{txt,gnmap,xml}',tend)
+		r.close()
 	xmlFiles = []
 
 	dir = "./programs/"+program
@@ -614,6 +621,10 @@ def testSubdomain(subdomain):
 	if subdomain.count('.') == 1:
 		print('This appears to be a root domain and therefore likely not a wildcard response - %s'%(subdomain))
 		return True
+	try:
+		ip = socket.gethostbyname(subdomain)
+	except:
+		print(tbad, 'No IP resolution for %s, not worth looking at.'%(subdomain),tend)
 	testdomain = get_random_string(12)+'.'+ subdomain.split('.',1)[1]
 	try:
 		ip = socket.gethostbyname(testdomain)
