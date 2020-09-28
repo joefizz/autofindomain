@@ -492,7 +492,7 @@ def dirsearch(program):
 				print (tgood,"--- Beginning directory search on %s"%(url),tend)
 
 				try:
-					os.system('./links/ffuf -maxtime 120 -s -o ./programs/'+program+'/'+hostname+'-ffuf_out-'+timestamp+'.json -timeout 5 -u '+ fuzzname+ ' -w ./ffuf/dict.txt -D -e php,txt,html -ic -ac -fc 403')
+					os.system('./links/ffuf -maxtime 120 -mc 200,204 -s -o ./programs/'+program+'/'+hostname+'-ffuf_out-'+timestamp+'.json -timeout 5 -u '+ fuzzname+ ' -w ./ffuf/dict.txt -D -e php,txt,html -ic -ac -fc 403')
 				except OSError as e:
 					print (e.output)
 
