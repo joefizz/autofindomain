@@ -653,16 +653,6 @@ def ctrlc(sig, frame):
 		fin(1)
 	signal.signal(signal.SIGINT, original_sigint)
 
-	try:
-		if raw_input("\nCtrl-c detected, would you like to (e)nd or (c)ontinue?: ").lower().startswith('e'):
-			sys.exit(1)
-
-	except KeyboardInterrupt:
-		print("Ok ok, quitting")
-		fin(1)
-
-    # restore the exit gracefully handler here    
-	signal.signal(signal.SIGINT, ctrlc)
 
 def fin(status):
 	flist = glob.glob('./report*')
