@@ -54,6 +54,7 @@ for (k,v) in data.items():
 
 			domains = program['domains']
 			for domain in domains:
+				domain.replace(" ","_").replace("(","").replace(")","").replace("&","and").replace("'","").replace("!","").replace(",","").lower()
 				print('Domain: '+domain)
 				testdomain = get_random_string(12)+'.'+domain
 				print(tnormal,'Testing for wildcard domain using: %s'%(testdomain),tend)
