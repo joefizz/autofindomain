@@ -876,6 +876,21 @@ def main():
 		fin(1)
 
 	if (sys.argv[1]) == "slack":
+		if len(sys.argv) = 1:
+
+			try:
+				data = {'initial_comment':'slack test successful','channels':slack_channel}
+			except Exception as e:
+				print(e)
+			headers = {'Authorization':'Bearer '+slack_oauth_token}
+			try:
+				r = requests.post(slack_api+'chat.postMessage', {'message':'slack message','channels':slack_channel}, headers=headers,)
+			except Exception as e:
+				print(tbad,e,tend)
+
+
+
+		else:
 		program = sys.argv[2].rstrip('\n')
 		print(tnormal,"Sending latest data for %s to slack"%(program),tend)
 		p = open(programs)
@@ -886,6 +901,7 @@ def main():
 				toSlack(program)
 				fin(1)
 		p.close()
+
 
 
 	if (sys.argv[1]) == "add":
