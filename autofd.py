@@ -567,10 +567,8 @@ def toSlack(program):
 				root = tree.getroot()
 				for port in root.iter('port'):
 					ports_list += '    '+str(port.attrib['protocol']+' : '+port.attrib['portid'] + '\n')
-
 				if 'https' in url:
 					hostname = 'https-'+hostname
-
 				try:
 					f = open('./programs/'+program+'/'+hostname+'-ffuf_out-'+timestamp+'.json')
 					ffufdata = json.load(f)
@@ -583,7 +581,6 @@ def toSlack(program):
 							results = v1
 					for r in results:
 						results_list += str(r['status'])+' - '+r['url']+'\n'
-
 				try:
 					data = {'initial_comment':'New subdomain discovered for '+program+': '+url+'\n - with status '+str(status)+'\n - pointing to '+str(IP)+ports_list+'\n- full aquatone results: '+aquatone_url+'/'+program+'/aquatone_report.html\n'+'```'+htext+'```\n'+results_list,'channels':slack_channel}
 				except Exception as e:
@@ -591,22 +588,20 @@ def toSlack(program):
 				headers = {'Authorization':'Bearer '+slack_oauth_token}
 				if screenshotPath == "":
 					try:
-						r = requests.post(slack_api+'chat.postMessage', json={'test':'New subdomain without screenshot discovered for '+program+': '+url+' - pointing to '+str(IP),'channel':slack_channel}, headers=headers,)
+						r = requests.post(slack_api+'chat.postMessage', {'message':'New subdomain without screenshot discovered for '+program+': '+url+' - pointing to '+str(IP),'channels':slack_channel}, headers=headers,)
 					except Exception as e:
 						print(tbad,e,tend)
 				else:	
 					try:
-						r = requests.post(slack_api+'files.upload', json=json.dumps(data), headers=headers, files={"file": (aquatone_web_path+'/'+program+'/'+screenshotPath, open(aquatone_web_path+'/'+program+'/'+screenshotPath, "rb"), "image/png")})
+						r = requests.post(slack_api+'files.upload', data, headers=headers, files={"file": (aquatone_web_path+'/'+program+'/'+screenshotPath, open(aquatone_web_path+'/'+program+'/'+screenshotPath, "rb"), "image/png")})
 					except Exception as e:
 						print(tbad,e,tend)
-
 	nuclei_results = '\n'
 	try:
 		with open('./programs/'+program+'/nuclei-out-'+timestamp+'.txt', 'r') as file:
 			nuclei_results += file.read()
 	except Exception as e:
 		print(e)
-
 	headers = {'Authorization':'Bearer '+slack_oauth_token}
 	try:
 		r = requests.post(slack_api+'chat.postMessage', {'text':'Nuclei results for '+program+nuclei_results,'channel':slack_channel}, headers=headers,)
@@ -675,7 +670,7 @@ def fin(status):
 	total_runtime = datetime.now()-now
 	print(tgood,'\n---- autoFD complete.  Total running time: '+str(total_runtime)+'\n')
 	os.remove('/tmp/autofd.pid')
-
+	slackMessage('autoFD run finished')
 	sys.exit(status)
 
 def bins(linux):
