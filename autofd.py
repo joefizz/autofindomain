@@ -877,6 +877,7 @@ def main():
 
 	if (sys.argv[1]) == "slack":
 		if len(sys.argv) < 3:
+			print('sending test to slack')
 			slack_api = 'https://slack.com/api/'
 			try:
 				data = {'initial_comment':'slack test successful','channels':slack_channel}
