@@ -881,6 +881,7 @@ def main():
 			slack_api = 'https://slack.com/api/'
 			try:
 				r = requests.post(slack_api+'chat.postMessage', data={'text':'slack message','channel':slack_channel}, headers={'Content-Type':'application/json','Authorization':'Bearer '+slack_oauth_token})
+				print(r)
 			except Exception as e:
 				print(tbad,e,tend)
 
