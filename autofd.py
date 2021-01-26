@@ -881,7 +881,7 @@ def main():
 			slack_api = 'https://slack.com/api/'
 			try:
 				r = requests.Request('POST', slack_api+'chat.postMessage', headers={'Authorization':'Bearer '+slack_oauth_token},data={'text':'slack message','channels':slack_channel})
-				prepared = req.prepare()
+				prepared = r.prepare()
 				print('{}\n{}\r\n{}\r\n\r\n{}'.format(
         			'-----------START-----------',
         			prepared.method + ' ' + prepared.url,
