@@ -888,6 +888,8 @@ def main():
         			'\r\n'.join('{}: {}'.format(k, v) for k, v in prepared.headers.items()),
         			prepared.body,
     			))
+				s=requests.Session()
+				s.send(prepared)
 
 
 			except Exception as e:
