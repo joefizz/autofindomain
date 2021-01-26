@@ -876,7 +876,7 @@ def main():
 		fin(1)
 
 	if (sys.argv[1]) == "slack":
-		if len(sys.argv) = 1:
+		if len(sys.argv) < 3:
 
 			try:
 				data = {'initial_comment':'slack test successful','channels':slack_channel}
