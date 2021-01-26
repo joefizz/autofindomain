@@ -891,16 +891,16 @@ def main():
 
 
 		else:
-		program = sys.argv[2].rstrip('\n')
-		print(tnormal,"Sending latest data for %s to slack"%(program),tend)
-		p = open(programs)
-		for line in p:
-			line = line.rstrip('\n')
-			if line == program:
-				print("Program " + program +" exists")
-				toSlack(program)
-				fin(1)
-		p.close()
+			program = sys.argv[2].rstrip('\n')
+			print(tnormal,"Sending latest data for %s to slack"%(program),tend)
+			p = open(programs)
+			for line in p:
+				line = line.rstrip('\n')
+				if line == program:
+					print("Program " + program +" exists")
+					toSlack(program)
+					fin(1)
+			p.close()
 
 
 
