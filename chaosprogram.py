@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import requests, socket, random, string, os, subprocess
+import requests, socket, random, string, os, subprocess, sys
 
 twhite = '\033[40m'
 tgood = '\033[32m'
