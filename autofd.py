@@ -583,12 +583,12 @@ def toSlack(program):
 				headers = {'Authorization':'Bearer '+slack_oauth_token}
 				if screenshotPath == "":
 					try:
-						r = requests.post(slack_api+'chat.postMessage', {'message':'New subdomain without screenshot discovered for '+program+': '+url+' - pointing to '+str(IP),'channels':slack_channel}, headers=headers,)
+						r = requests.post(slack_api+'chat.postMessage', json={'test':'New subdomain without screenshot discovered for '+program+': '+url+' - pointing to '+str(IP),'channel':slack_channel}, headers=headers,)
 					except Exception as e:
 						print(tbad,e,tend)
 				else:	
 					try:
-						r = requests.post(slack_api+'files.upload', data, headers=headers, files={"file": (aquatone_web_path+'/'+program+'/'+screenshotPath, open(aquatone_web_path+'/'+program+'/'+screenshotPath, "rb"), "image/png")})
+						r = requests.post(slack_api+'files.upload', json=json.dumps(data), headers=headers, files={"file": (aquatone_web_path+'/'+program+'/'+screenshotPath, open(aquatone_web_path+'/'+program+'/'+screenshotPath, "rb"), "image/png")})
 					except Exception as e:
 						print(tbad,e,tend)
 
