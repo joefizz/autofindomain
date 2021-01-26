@@ -881,7 +881,16 @@ def main():
 			slack_api = 'https://slack.com/api/'
 			headers = {'Authorization':'Bearer '+slack_oauth_token}
 			try:
-				r = requests.post(slack_api+'chat.postMessage', {'text':'slack message','channels':slack_channel}, headers=headers,)
+				r = requests.Request('POST', slack_api+'chat.postMessage', {'text':'slack message','channels':slack_channel}, headers=headers,)
+				prepared = req.prepare()
+				print('{}\n{}\r\n{}\r\n\r\n{}'.format(
+        			'-----------START-----------',
+        			prepared.method + ' ' + prepared.url,
+        			'\r\n'.join('{}: {}'.format(k, v) for k, v in prepared.headers.items()),
+        			prepared.body,
+    			))
+
+
 			except Exception as e:
 				print(tbad,e,tend)
 
