@@ -275,12 +275,10 @@ def subNmap(program):
 	return port_count
 
 def slackMessage(message):
-	print('sending test to slack')
 	slack_api = 'https://slack.com/api/'
 
 	try:
 		r = requests.post(slack_api+'chat.postMessage', json={"text":message,"channel":slack_channel}, headers={'Content-Type':'application/json','Authorization':'Bearer '+slack_oauth_token})
-		print(r.content)
 	except Exception as e:
 		print(tbad,e,tend)
 
@@ -616,15 +614,18 @@ def toSlack(program):
 			print(tbad,e,tend)
 
 def testSubdomain(subdomain):
-
-	d = open('./excludedomains.txt', 'r')
-	dlist = d.readlines()
-	d.close()
-	for d in dlist:
-		d = d.strip('\n')
-		if d in subdomain:
-			print('%s contains %s which is in excludedomains.txt'%(subdomain,d))
-			return False
+	try:
+		d = open('./excludedomains.txt', 'r')
+		dlist = d.readlines()
+		d.close()
+		for d in dlist:
+			d = d.strip('\n')
+			if d in subdomain:
+				print('%s contains %s which is in excludedomains.txt'%(subdomain,d))
+				return False
+	except Exception as e:
+		print(e)
+	
 	if subdomain.count('.') == 1:
 		print('This appears to be a root domain and therefore likely not a wildcard response - %s'%(subdomain))
 		return True
