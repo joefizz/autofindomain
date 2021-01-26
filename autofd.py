@@ -879,9 +879,8 @@ def main():
 		if len(sys.argv) < 3:
 			print('sending test to slack')
 			slack_api = 'https://slack.com/api/'
-			headers = {'Authorization':'Bearer '+slack_oauth_token}
 			try:
-				r = requests.Request('POST', slack_api+'chat.postMessage', {'text':'slack message','channels':slack_channel}, headers=headers,)
+				r = requests.Request('POST', slack_api+'chat.postMessage', {'text':'slack message','channels':slack_channel}, headers={'Authorization':'Bearer '+slack_oauth_token})
 				prepared = req.prepare()
 				print('{}\n{}\r\n{}\r\n\r\n{}'.format(
         			'-----------START-----------',
