@@ -276,7 +276,7 @@ def subNmap(program):
 
 def slackMessage(message):
 	print('sending test to slack')
-	slack_api = 'https://slack.com/api/"
+	slack_api = 'https://slack.com/api/'
 
 	try:
 		r = requests.post(slack_api+'chat.postMessage', json={"text":message,"channel":slack_channel}, headers={'Content-Type':'application/json','Authorization':'Bearer '+slack_oauth_token})
@@ -758,7 +758,7 @@ def main():
 
 	if (sys.argv[1]).lower() == "enum" or (sys.argv[1]).lower() == "program":
 		slackMessage('Starting new run of autoFD')
-		
+
 		if platform.system() == "Linux":
 			if os.geteuid() != 0:
 				print(talert,"*** autoFD on Linux requires running as sudo.  \nThis is to improve nmap scan speed, but more importantly to ensure permissions for various things work.",tend)
