@@ -885,7 +885,7 @@ def main():
 				print(e)
 			headers = {'Authorization':'Bearer '+slack_oauth_token}
 			try:
-				r = requests.post(slack_api+'chat.postMessage', {'message':'slack message','channels':slack_channel}, headers=headers,)
+				r = requests.post(slack_api+'chat.postMessage', {'text':'slack message','channels':slack_channel}, headers=headers,)
 			except Exception as e:
 				print(tbad,e,tend)
 
