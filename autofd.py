@@ -274,6 +274,16 @@ def subNmap(program):
 
 	return port_count
 
+def slackMessage(message):
+	print('sending test to slack')
+	slack_api = 'https://slack.com/api/"
+
+	try:
+		r = requests.post(slack_api+'chat.postMessage', json={"text":message,"channel":slack_channel}, headers={'Content-Type':'application/json','Authorization':'Bearer '+slack_oauth_token})
+		print(r.content)
+	except Exception as e:
+		print(tbad,e,tend)
+
 def xmlMerge(xmlFiles, program):
 
 	hosts_count = 0
@@ -747,6 +757,7 @@ def main():
 	bins(linux)
 
 	if (sys.argv[1]).lower() == "enum" or (sys.argv[1]).lower() == "program":
+		slackMessage('Starting new run of autoFD')
 		
 		if platform.system() == "Linux":
 			if os.geteuid() != 0:
