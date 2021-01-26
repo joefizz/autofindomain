@@ -877,7 +877,7 @@ def main():
 
 	if (sys.argv[1]) == "slack":
 		if len(sys.argv) < 3:
-
+			slack_api = 'https://slack.com/api/'
 			try:
 				data = {'initial_comment':'slack test successful','channels':slack_channel}
 			except Exception as e:
