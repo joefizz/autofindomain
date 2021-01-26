@@ -879,10 +879,6 @@ def main():
 		if len(sys.argv) < 3:
 			print('sending test to slack')
 			slack_api = 'https://slack.com/api/'
-			try:
-				data = {'initial_comment':'slack test successful','channels':slack_channel}
-			except Exception as e:
-				print(e)
 			headers = {'Authorization':'Bearer '+slack_oauth_token}
 			try:
 				r = requests.post(slack_api+'chat.postMessage', {'text':'slack message','channels':slack_channel}, headers=headers,)
