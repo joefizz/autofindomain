@@ -880,18 +880,7 @@ def main():
 			print('sending test to slack')
 			slack_api = 'https://slack.com/api/'
 			try:
-				r = requests.Request('POST', slack_api+'chat.postMessage', headers={'Content-Type':'application/json','Authorization':'Bearer '+slack_oauth_token},data=json.dump({'text':'slack message','channel':slack_channel}))
-				prepared = r.prepare()
-				print('{}\n{}\r\n{}\r\n\r\n{}'.format(
-        			'-----------START-----------',
-        			prepared.method + ' ' + prepared.url,
-        			'\r\n'.join('{}: {}'.format(k, v) for k, v in prepared.headers.items()),
-        			prepared.body,
-    			))
-				s=requests.Session()
-				s.send(prepared)
-
-
+				r = requests.post(slack_api+'chat.postMessage', data="{'text':'slack message','channel':slack_channel}", headers={'Content-Type':'application/json','Authorization':'Bearer '+slack_oauth_token})
 			except Exception as e:
 				print(tbad,e,tend)
 
